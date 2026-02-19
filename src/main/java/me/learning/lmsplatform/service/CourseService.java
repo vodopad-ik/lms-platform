@@ -1,7 +1,6 @@
 package me.learning.lmsplatform.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import me.learning.lmsplatform.dto.CourseDto;
 import me.learning.lmsplatform.model.Course;
@@ -29,7 +28,7 @@ public class CourseService {
   public List<CourseDto> getAllCourses() {
     return courseRepository.findAll().stream()
         .map(this::mapToDto)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private CourseDto mapToDto(Course course) {
