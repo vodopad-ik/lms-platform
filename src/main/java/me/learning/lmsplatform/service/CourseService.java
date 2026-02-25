@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.learning.lmsplatform.dto.CourseDto;
 import me.learning.lmsplatform.mapper.CourseMapper;
-import me.learning.lmsplatform.model.Course;
 import me.learning.lmsplatform.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
