@@ -43,7 +43,6 @@ public class CourseService {
         return courseMapper.mapToDto(courseRepository.save(course));
     }
 
-    // PUT: полная замена всех полей
     public CourseDto updateCourse(Long id, CourseDto courseDto) {
         Course existing = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MSG + id));
@@ -52,7 +51,6 @@ public class CourseService {
         return courseMapper.mapToDto(courseRepository.save(existing));
     }
 
-    // PATCH: частичное обновление — меняем только переданные поля
     public CourseDto patchCourse(Long id, CoursePatchDto patchDto) {
         Course existing = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MSG + id));
