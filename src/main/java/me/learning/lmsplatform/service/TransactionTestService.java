@@ -1,6 +1,7 @@
 package me.learning.lmsplatform.service;
 
 import lombok.RequiredArgsConstructor;
+import me.learning.lmsplatform.exception.SimulatedFailureException;
 import me.learning.lmsplatform.model.Category;
 import me.learning.lmsplatform.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,8 @@ public class TransactionTestService {
         String uuid = java.util.UUID.randomUUID().toString().substring(0, 8);
         String name = "NoTx - " + uuid;
         categoryRepository.save(Category.builder().name(name).build());
-        throw new RuntimeException("Error after first save! First record should be in DB.");
+        throw new SimulatedFailureException(
+                "Error after first save! First record should be in DB.");
     }
 
     @Transactional
@@ -24,6 +26,6 @@ public class TransactionTestService {
         String uuid = java.util.UUID.randomUUID().toString().substring(0, 8);
         String name = "WithTx - " + uuid;
         categoryRepository.save(Category.builder().name(name).build());
-        throw new RuntimeException("Error! @Transactional should rollback everything.");
+        throw new SimulatedFailureException("Error! @Transactional should rollback everything.");
     }
 }

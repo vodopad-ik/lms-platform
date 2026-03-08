@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.learning.lmsplatform.dto.CourseDto;
 import me.learning.lmsplatform.dto.CoursePatchDto;
+import me.learning.lmsplatform.exception.ResourceNotFoundException;
 import me.learning.lmsplatform.mapper.CourseMapper;
 import me.learning.lmsplatform.model.Course;
 import me.learning.lmsplatform.repository.CourseRepository;
@@ -27,13 +28,14 @@ public class CourseService {
     public CourseDto getCourseById(Long id) {
         return courseRepository.findById(id)
                 .map(courseMapper::mapToDto)
-                .orElseThrow(() -> new RuntimeException(NOT_FOUND_MSG + id));
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MSG + id));
     }
 
     public CourseDto getCourseByTitle(String title) {
         return courseRepository.findByTitle(title)
                 .map(courseMapper::mapToDto)
-                .orElseThrow(() -> new RuntimeException("Course not found with title: " + title));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course not found with title: " + title));
     }
 
     public CourseDto createCourse(CourseDto courseDto) {
@@ -44,7 +46,7 @@ public class CourseService {
     // PUT: полная замена всех полей
     public CourseDto updateCourse(Long id, CourseDto courseDto) {
         Course existing = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(NOT_FOUND_MSG + id));
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MSG + id));
         existing.setTitle(courseDto.getTitle());
         existing.setDescription(courseDto.getDescription());
         return courseMapper.mapToDto(courseRepository.save(existing));
@@ -53,7 +55,7 @@ public class CourseService {
     // PATCH: частичное обновление — меняем только переданные поля
     public CourseDto patchCourse(Long id, CoursePatchDto patchDto) {
         Course existing = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(NOT_FOUND_MSG + id));
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MSG + id));
         if (patchDto.getTitle() != null) {
             existing.setTitle(patchDto.getTitle());
         }
