@@ -9,4 +9,5 @@
     <suppress checks="JavadocType" files=".*\.java"/>
     <suppress checks="JavadocVariable" files=".*\.java"/>
     <suppress checks="JavadocStyle" files=".*\.java"/>
+    <suppress checks="Indentation" files=".*\.java"/>
 </suppressions>

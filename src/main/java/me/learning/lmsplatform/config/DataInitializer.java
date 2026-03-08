@@ -1,9 +1,15 @@
 package me.learning.lmsplatform.config;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.learning.lmsplatform.model.Category;
 import me.learning.lmsplatform.model.Course;
+import me.learning.lmsplatform.model.Lesson;
+import me.learning.lmsplatform.model.Teacher;
+import me.learning.lmsplatform.repository.CategoryRepository;
 import me.learning.lmsplatform.repository.CourseRepository;
+import me.learning.lmsplatform.repository.TeacherRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,36 +19,47 @@ import org.springframework.context.annotation.Configuration;
 public class DataInitializer implements CommandLineRunner {
 
   private final CourseRepository courseRepository;
+  private final TeacherRepository teacherRepository;
+  private final CategoryRepository categoryRepository;
 
   @Override
   public void run(String... args) {
     if (courseRepository.count() == 0) {
-      Course javaCourse = Course.builder()
+      Category devCategory = categoryRepository.save(
+          Category.builder().name("Development").build());
+      Category opsCategory = categoryRepository.save(
+          Category.builder().name("DevOps").build());
+
+      Teacher johnDoe = teacherRepository.save(Teacher.builder()
+          .name("John Doe")
+          .email("john.doe@example.com")
+          .build());
+
+      Course javaCourse = courseRepository.save(Course.builder()
           .title("Java for Beginners")
           .description("Learn Java from scratch")
-          .build();
+          .teacher(johnDoe)
+          .category(devCategory)
+          .build());
 
-      Course springCourse = Course.builder()
-          .title("Spring Boot Deep Dive")
-          .description("Master Spring Boot application development")
-          .build();
+      Course dockerCourse = courseRepository.save(Course.builder()
+          .title("Docker Essentials")
+          .description("Master containerization basics")
+          .teacher(johnDoe)
+          .category(opsCategory)
+          .build());
 
-      Course dockerCourse = Course.builder()
-          .title("Docker for Developers")
-          .description("Containerize your applications easily")
-          .build();
-
-      Course sqlCourse = Course.builder()
-          .title("PostgreSQL Advanced")
-          .description("Master complex queries and optimization")
-          .build();
+      javaCourse.setLessons(List.of(
+          Lesson.builder().title("Java Intro").content("Welcome to Java")
+              .course(javaCourse).build()));
+      dockerCourse.setLessons(List.of(
+          Lesson.builder().title("Docker Intro").content("Welcome to Docker")
+              .course(dockerCourse).build()));
 
       courseRepository.save(javaCourse);
-      courseRepository.save(springCourse);
       courseRepository.save(dockerCourse);
-      courseRepository.save(sqlCourse);
 
-      log.info("Sample data initialized with 4 courses!");
+      log.info("Sample data initialized: Teachers, Categories, Courses, Lessons!");
     } else {
       log.info("Database already contains data, skipping initialization.");
     }
