@@ -25,43 +25,68 @@ public class DataInitializer implements CommandLineRunner {
   @Override
   public void run(String... args) {
     if (courseRepository.count() == 0) {
-      Category devCategory = categoryRepository.save(
-          Category.builder().name("Development").build());
-      Category opsCategory = categoryRepository.save(
-          Category.builder().name("DevOps").build());
+      // 1. Categories
+      Category devCat = categoryRepository.save(Category.builder().name("Development").build());
+      Category designCat = categoryRepository.save(Category.builder().name("Design").build());
+      Category dataCat = categoryRepository.save(Category.builder().name("Data Science").build());
+      Category devOpsCat = categoryRepository.save(Category.builder().name("DevOps").build());
 
-      Teacher johnDoe = teacherRepository.save(Teacher.builder()
-          .name("John Doe")
-          .email("john.doe@example.com")
+      // 2. Teachers
+      Teacher peters = teacherRepository.save(Teacher.builder()
+          .name("Dr. Peters")
+          .email("peters@university.edu")
+          .build());
+      Teacher smith = teacherRepository.save(Teacher.builder()
+          .name("Alice Smith")
+          .email("alice.smith@lms.com")
           .build());
 
-      Course javaCourse = courseRepository.save(Course.builder()
-          .title("Java for Beginners")
-          .description("Learn Java from scratch")
-          .teacher(johnDoe)
-          .category(devCategory)
+      // 3. Courses
+      Course java = courseRepository.save(Course.builder()
+          .title("Java Masterclass")
+          .description("Complete Java roadmap for enterprise")
+          .teacher(peters)
+          .category(devCat)
           .build());
 
-      Course dockerCourse = courseRepository.save(Course.builder()
-          .title("Docker Essentials")
-          .description("Master containerization basics")
-          .teacher(johnDoe)
-          .category(opsCategory)
+      Course python = courseRepository.save(Course.builder()
+          .title("Python for Data")
+          .description("Analytics and ML with Python")
+          .teacher(smith)
+          .category(dataCat)
           .build());
 
-      javaCourse.setLessons(List.of(
-          Lesson.builder().title("Java Intro").content("Welcome to Java")
-              .course(javaCourse).build()));
-      dockerCourse.setLessons(List.of(
-          Lesson.builder().title("Docker Intro").content("Welcome to Docker")
-              .course(dockerCourse).build()));
+      Course uiux = courseRepository.save(Course.builder()
+          .title("UI/UX Basics")
+          .description("User interface and experience design")
+          .teacher(smith)
+          .category(designCat)
+          .build());
 
-      courseRepository.save(javaCourse);
-      courseRepository.save(dockerCourse);
+      Course docker = courseRepository.save(Course.builder()
+          .title("Docker & K8s")
+          .description("Cloud-native infrastructure guide")
+          .teacher(peters)
+          .category(devOpsCat)
+          .build());
 
-      log.info("Sample data initialized: Teachers, Categories, Courses, Lessons!");
-    } else {
-      log.info("Database already contains data, skipping initialization.");
+      Course react = courseRepository.save(Course.builder()
+          .title("React.js Modern")
+          .description("Hooks, Context API and Redux")
+          .teacher(smith)
+          .category(devCat)
+          .build());
+
+      // 4. Lessons for one course (Java)
+      java.setLessons(List.of(
+          Lesson.builder().title("Introduction").content("Intro to JVM").course(java).build(),
+          Lesson.builder().title("Classes").content("OOP Principles").course(java).build(),
+          Lesson.builder().title("Collections").content("Lists and Maps").course(java).build()
+      ));
+
+      courseRepository.save(java);
+
+      log.info("Finished: Enhanced data seed with multiple courses and teachers.");
     }
   }
 }
