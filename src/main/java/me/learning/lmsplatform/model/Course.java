@@ -1,5 +1,6 @@
 package me.learning.lmsplatform.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,13 +40,16 @@ public class Course {
 
   private String description;
 
+  @JsonIgnoreProperties("courses")
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "teacher_id")
   private Teacher teacher;
 
+  @JsonIgnoreProperties("course")
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Lesson> lessons;
 
+  @JsonIgnoreProperties("courses")
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "course_students",

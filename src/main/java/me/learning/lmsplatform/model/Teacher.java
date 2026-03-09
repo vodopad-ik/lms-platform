@@ -1,6 +1,6 @@
 package me.learning.lmsplatform.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +36,7 @@ public class Teacher {
     @Column(unique = true)
     private String email;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("teacher")
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Course> courses;
 }
