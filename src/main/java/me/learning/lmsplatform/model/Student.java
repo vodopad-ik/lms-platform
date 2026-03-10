@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +32,12 @@ public class Student {
     @Column(nullable = false)
     private String name;
 
-    @JsonIgnoreProperties("students")
+    @Column(unique = true)
+    private String email;
+
+    private LocalDate enrollmentDate;
+
+    @JsonIgnoreProperties({"students", "hibernateLazyInitializer", "handler"})
     @ManyToMany(mappedBy = "students")
     private Set<Course> courses;
 }

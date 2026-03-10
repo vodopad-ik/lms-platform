@@ -1,5 +1,6 @@
 package me.learning.lmsplatform.config;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -43,15 +44,27 @@ public class DataInitializer implements CommandLineRunner {
             Teacher peters = teacherRepository.save(Teacher.builder()
                 .name("Dr. Peters")
                 .email("peters@university.edu")
+                .department("Computer Science")
+                .experienceYears(15)
                 .build());
             Teacher smith = teacherRepository.save(Teacher.builder()
                 .name("Alice Smith")
                 .email("alice.smith@lms.com")
+                .department("Software Engineering")
+                .experienceYears(8)
                 .build());
 
             // 3. Students
-            Student vlat = studentRepository.save(Student.builder().name("Vlat").build());
-            Student marina = studentRepository.save(Student.builder().name("Marina").build());
+            Student vlat = studentRepository.save(Student.builder()
+                .name("Vlad")
+                .email("vlad@example.com")
+                .enrollmentDate(LocalDate.now().minusDays(10))
+                .build());
+            Student marina = studentRepository.save(Student.builder()
+                .name("Marina")
+                .email("marina@example.com")
+                .enrollmentDate(LocalDate.now().minusDays(5))
+                .build());
 
             // 4. Courses
             Course java = courseRepository.save(Course.builder()
@@ -59,6 +72,8 @@ public class DataInitializer implements CommandLineRunner {
                 .description("Complete Java roadmap for enterprise")
                 .teacher(peters)
                 .category(devCat)
+                .price(199.99)
+                .durationWeeks(12)
                 .students(Set.of(vlat, marina))
                 .build());
 
@@ -67,6 +82,8 @@ public class DataInitializer implements CommandLineRunner {
                 .description("Analytics and ML with Python")
                 .teacher(smith)
                 .category(dataCat)
+                .price(149.99)
+                .durationWeeks(8)
                 .students(Set.of(vlat))
                 .build());
 
@@ -75,6 +92,8 @@ public class DataInitializer implements CommandLineRunner {
                 .description("User interface and experience design")
                 .teacher(smith)
                 .category(designCat)
+                .price(99.99)
+                .durationWeeks(6)
                 .students(Set.of(marina))
                 .build());
 
@@ -83,6 +102,8 @@ public class DataInitializer implements CommandLineRunner {
                 .description("Cloud-native infrastructure guide")
                 .teacher(peters)
                 .category(devOpsCat)
+                .price(250.0)
+                .durationWeeks(10)
                 .build());
 
             Course react = courseRepository.save(Course.builder()
@@ -90,15 +111,20 @@ public class DataInitializer implements CommandLineRunner {
                 .description("Hooks, Context API and Redux")
                 .teacher(smith)
                 .category(devCat)
+                .price(120.0)
+                .durationWeeks(8)
                 .build());
 
             // 5. Lessons for one course (Java)
             java.setLessons(List.of(
                 Lesson.builder().title("Introduction").content("Intro to JVM")
+                    .durationMinutes(45).videoUrl("http://vid.us/1")
                     .course(java).build(),
                 Lesson.builder().title("Classes").content("OOP Principles")
+                    .durationMinutes(60).videoUrl("http://vid.us/2")
                     .course(java).build(),
                 Lesson.builder().title("Collections").content("Lists and Maps")
+                    .durationMinutes(50).videoUrl("http://vid.us/3")
                     .course(java).build()
             ));
 

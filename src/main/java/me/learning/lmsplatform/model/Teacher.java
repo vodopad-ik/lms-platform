@@ -36,7 +36,11 @@ public class Teacher {
     @Column(unique = true)
     private String email;
 
-    @JsonIgnoreProperties("teacher")
+    private String department;
+
+    private Integer experienceYears;
+
+    @JsonIgnoreProperties({"teacher", "hibernateLazyInitializer", "handler"})
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Course> courses;
 }

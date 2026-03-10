@@ -40,16 +40,20 @@ public class Course {
 
   private String description;
 
-  @JsonIgnoreProperties("courses")
+  private Double price;
+
+  private Integer durationWeeks;
+
+  @JsonIgnoreProperties({"courses", "hibernateLazyInitializer", "handler"})
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "teacher_id")
   private Teacher teacher;
 
-  @JsonIgnoreProperties("course")
+  @JsonIgnoreProperties({"course", "hibernateLazyInitializer", "handler"})
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Lesson> lessons;
 
-  @JsonIgnoreProperties("courses")
+  @JsonIgnoreProperties({"courses", "hibernateLazyInitializer", "handler"})
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "course_students",
