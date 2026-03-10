@@ -77,7 +77,7 @@ public class DataInitializer implements CommandLineRunner {
                 .students(Set.of(vlat, marina))
                 .build());
 
-            Course python = courseRepository.save(Course.builder()
+            courseRepository.save(Course.builder()
                 .title("Python for Data")
                 .description("Analytics and ML with Python")
                 .teacher(smith)
@@ -87,7 +87,7 @@ public class DataInitializer implements CommandLineRunner {
                 .students(Set.of(vlat))
                 .build());
 
-            Course uiux = courseRepository.save(Course.builder()
+            courseRepository.save(Course.builder()
                 .title("UI/UX Basics")
                 .description("User interface and experience design")
                 .teacher(smith)
@@ -97,7 +97,7 @@ public class DataInitializer implements CommandLineRunner {
                 .students(Set.of(marina))
                 .build());
 
-            Course docker = courseRepository.save(Course.builder()
+            courseRepository.save(Course.builder()
                 .title("Docker & K8s")
                 .description("Cloud-native infrastructure guide")
                 .teacher(peters)
@@ -106,7 +106,7 @@ public class DataInitializer implements CommandLineRunner {
                 .durationWeeks(10)
                 .build());
 
-            Course react = courseRepository.save(Course.builder()
+            courseRepository.save(Course.builder()
                 .title("React.js Modern")
                 .description("Hooks, Context API and Redux")
                 .teacher(smith)
