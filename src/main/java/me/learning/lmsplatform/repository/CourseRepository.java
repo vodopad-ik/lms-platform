@@ -11,16 +11,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-  @EntityGraph(attributePaths = { "teacher", "category", "lessons" })
+  @EntityGraph(attributePaths = {"teacher", "category"})
+  List<Course> findAll();
+
+  @EntityGraph(attributePaths = {"teacher", "category"})
   Optional<Course> findByTitle(String title);
 
-  @Override
-  @EntityGraph(attributePaths = { "teacher", "category", "lessons" })
+  @EntityGraph(attributePaths = {"teacher", "category"})
   Optional<Course> findById(Long id);
-
-  @Override
-  @EntityGraph(attributePaths = { "teacher", "category", "lessons" })
-  List<Course> findAll();
 
   @Query("SELECT c FROM Course c JOIN FETCH c.lessons WHERE c.id = :id")
   Optional<Course> findCourseWithLessons(Long id);

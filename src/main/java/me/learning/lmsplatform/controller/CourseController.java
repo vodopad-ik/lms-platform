@@ -4,6 +4,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.learning.lmsplatform.dto.CourseDto;
 import me.learning.lmsplatform.dto.CoursePatchDto;
+import me.learning.lmsplatform.dto.LessonCreateDto;
+import me.learning.lmsplatform.dto.LessonDto;
 import me.learning.lmsplatform.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,18 @@ public class CourseController {
     return ResponseEntity.ok(courseService.getCourseById(id));
   }
 
+  @GetMapping("/{courseId}/lessons")
+  public ResponseEntity<List<LessonDto>> getCourseLessons(@PathVariable Long courseId) {
+    return ResponseEntity.ok(courseService.getLessonsByCourseId(courseId));
+  }
+
+  @PostMapping("/{courseId}/lessons")
+  public ResponseEntity<LessonDto> addLessonToCourse(
+      @PathVariable Long courseId, @RequestBody LessonCreateDto lessonDto) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(courseService.addLessonToCourse(courseId, lessonDto));
+  }
+
   @GetMapping("/search")
   public ResponseEntity<CourseDto> getCourseByTitle(@RequestParam String title) {
     return ResponseEntity.ok(courseService.getCourseByTitle(title));
@@ -61,5 +75,11 @@ public class CourseController {
   public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
     courseService.deleteCourse(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/{courseId}/students/{studentId}")
+  public ResponseEntity<CourseDto> addStudentToCourse(
+      @PathVariable Long courseId, @PathVariable Long studentId) {
+    return ResponseEntity.ok(courseService.addStudentToCourse(courseId, studentId));
   }
 }

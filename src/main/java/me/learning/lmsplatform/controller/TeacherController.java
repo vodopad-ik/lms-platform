@@ -2,9 +2,9 @@ package me.learning.lmsplatform.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import me.learning.lmsplatform.repository.TeacherRepository;
 import me.learning.lmsplatform.dto.TeacherDto;
 import me.learning.lmsplatform.mapper.TeacherMapper;
+import me.learning.lmsplatform.repository.TeacherRepository;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +31,9 @@ public class TeacherController {
 
     @GetMapping("/{id}")
     public TeacherDto getTeacher(@PathVariable Long id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
         return teacherRepository.findById(id)
                 .map(teacherMapper::mapToDto)
                 .orElse(null);
@@ -39,13 +41,19 @@ public class TeacherController {
 
     @PostMapping
     public TeacherDto createTeacher(@RequestBody TeacherDto teacherDto) {
-        if (teacherDto == null) return null;
-        return teacherMapper.mapToDto(teacherRepository.save(teacherMapper.mapToEntity(teacherDto)));
+        if (teacherDto == null) {
+            return null;
+        }
+        return teacherMapper.mapToDto(teacherRepository.save(
+                teacherMapper.mapToEntity(teacherDto)));
     }
 
     @PutMapping("/{id}")
-    public TeacherDto updateTeacher(@PathVariable Long id, @RequestBody TeacherDto teacherDetails) {
-        if (id == null || teacherDetails == null) return null;
+    public TeacherDto updateTeacher(@PathVariable Long id,
+                                   @RequestBody TeacherDto teacherDetails) {
+        if (id == null || teacherDetails == null) {
+            return null;
+        }
         return teacherRepository.findById(id)
                 .map(teacher -> {
                     teacher.setName(teacherDetails.getName());

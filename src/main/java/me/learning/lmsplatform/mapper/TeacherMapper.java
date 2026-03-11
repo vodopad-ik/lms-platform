@@ -14,7 +14,9 @@ public class TeacherMapper {
     private final CourseMapper courseMapper;
 
     public TeacherDto mapToDto(Teacher teacher) {
-        if (teacher == null) return null;
+        if (teacher == null) {
+            return null;
+        }
         return TeacherDto.builder()
                 .id(teacher.getId())
                 .name(teacher.getName())
@@ -22,13 +24,17 @@ public class TeacherMapper {
                 .department(teacher.getDepartment())
                 .experienceYears(teacher.getExperienceYears())
                 .courses(teacher.getCourses() != null
-                        ? teacher.getCourses().stream().map(courseMapper::mapToShortDto).collect(Collectors.toList())
+                        ? teacher.getCourses().stream()
+                                .map(courseMapper::mapToShortDto)
+                                .collect(Collectors.toList())
                         : Collections.emptyList())
                 .build();
     }
 
     public Teacher mapToEntity(TeacherDto dto) {
-        if (dto == null) return null;
+        if (dto == null) {
+            return null;
+        }
         return Teacher.builder()
                 .id(dto.getId())
                 .name(dto.getName())

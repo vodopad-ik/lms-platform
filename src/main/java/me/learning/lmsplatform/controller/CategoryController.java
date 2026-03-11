@@ -31,7 +31,9 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public CategoryDto getCategory(@PathVariable Long id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
         return categoryRepository.findById(id)
                 .map(categoryMapper::mapToDto)
                 .orElse(null);
@@ -39,13 +41,19 @@ public class CategoryController {
 
     @PostMapping
     public CategoryDto createCategory(@RequestBody CategoryDto categoryDto) {
-        if (categoryDto == null) return null;
-        return categoryMapper.mapToDto(categoryRepository.save(categoryMapper.mapToEntity(categoryDto)));
+        if (categoryDto == null) {
+            return null;
+        }
+        return categoryMapper.mapToDto(categoryRepository.save(
+                categoryMapper.mapToEntity(categoryDto)));
     }
 
     @PutMapping("/{id}")
-    public CategoryDto updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDetails) {
-        if (id == null || categoryDetails == null) return null;
+    public CategoryDto updateCategory(@PathVariable Long id,
+                                      @RequestBody CategoryDto categoryDetails) {
+        if (id == null || categoryDetails == null) {
+            return null;
+        }
         return categoryRepository.findById(id)
                 .map(category -> {
                     category.setName(categoryDetails.getName());

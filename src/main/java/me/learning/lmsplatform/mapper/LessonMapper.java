@@ -1,6 +1,7 @@
 package me.learning.lmsplatform.mapper;
 
 import me.learning.lmsplatform.dto.CourseShortDto;
+import me.learning.lmsplatform.dto.LessonCreateDto;
 import me.learning.lmsplatform.dto.LessonDto;
 import me.learning.lmsplatform.model.Lesson;
 import org.springframework.stereotype.Component;
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class LessonMapper {
     public LessonDto mapToDto(Lesson lesson) {
-        if (lesson == null) return null;
+        if (lesson == null) {
+            return null;
+        }
         return LessonDto.builder()
                 .id(lesson.getId())
                 .title(lesson.getTitle())
@@ -23,9 +26,23 @@ public class LessonMapper {
     }
 
     public Lesson mapToEntity(LessonDto dto) {
-        if (dto == null) return null;
+        if (dto == null) {
+            return null;
+        }
         return Lesson.builder()
                 .id(dto.getId())
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .durationMinutes(dto.getDurationMinutes())
+                .videoUrl(dto.getVideoUrl())
+                .build();
+    }
+
+    public Lesson mapCreateToEntity(LessonCreateDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        return Lesson.builder()
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .durationMinutes(dto.getDurationMinutes())

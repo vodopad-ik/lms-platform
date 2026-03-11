@@ -120,10 +120,20 @@ export DB_PASSWORD=your_password
 ### Курсы (Courses API)
 *   `GET /api/courses` — Список всех курсов (оптимизировано через EntityGraph).
 *   `GET /api/courses/{id}` — Детали курса.
+*   `GET /api/courses/{courseId}/lessons` — Уроки курса.
 *   `POST /api/courses` — Создание нового курса.
+*   `POST /api/courses/{courseId}/lessons` — Добавление урока на курс.
+*   `POST /api/courses/{courseId}/students/{studentId}` — Запись студента на курс.
 *   `PUT /api/courses/{id}` — Полное обновление.
 *   `PATCH /api/courses/{id}` — Частичное обновление.
 *   `DELETE /api/courses/{id}` — Удаление.
+
+### Уроки (Lessons API)
+*   `GET /api/lessons` — Список всех уроков.
+*   `GET /api/lessons/{id}` — Детали урока.
+*   `POST /api/lessons` — Создание урока (опционально `courseId` в body для привязки к курсу).
+*   `PUT /api/lessons/{id}` — Обновление урока.
+*   `DELETE /api/lessons/{id}` — Удаление урока.
 
 ### Демонстрация транзакций
 *   `POST /api/test/no-transaction` — Попытка сохранения без `@Transactional` (демонстрирует частичное сохранение при ошибке).

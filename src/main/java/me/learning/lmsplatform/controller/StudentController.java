@@ -31,7 +31,9 @@ public class StudentController {
 
     @GetMapping("/{id}")
     public StudentDto getStudent(@PathVariable Long id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
         return studentRepository.findById(id)
                 .map(studentMapper::mapToDto)
                 .orElse(null);
@@ -39,13 +41,19 @@ public class StudentController {
 
     @PostMapping
     public StudentDto createStudent(@RequestBody StudentDto studentDto) {
-        if (studentDto == null) return null;
-        return studentMapper.mapToDto(studentRepository.save(studentMapper.mapToEntity(studentDto)));
+        if (studentDto == null) {
+            return null;
+        }
+        return studentMapper.mapToDto(studentRepository.save(
+                studentMapper.mapToEntity(studentDto)));
     }
 
     @PutMapping("/{id}")
-    public StudentDto updateStudent(@PathVariable Long id, @RequestBody StudentDto studentDetails) {
-        if (id == null || studentDetails == null) return null;
+    public StudentDto updateStudent(@PathVariable Long id,
+                                   @RequestBody StudentDto studentDetails) {
+        if (id == null || studentDetails == null) {
+            return null;
+        }
         return studentRepository.findById(id)
                 .map(student -> {
                     student.setName(studentDetails.getName());

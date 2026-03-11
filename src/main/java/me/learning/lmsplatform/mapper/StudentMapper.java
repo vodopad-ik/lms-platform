@@ -14,20 +14,26 @@ public class StudentMapper {
     private final CourseMapper courseMapper;
 
     public StudentDto mapToDto(Student student) {
-        if (student == null) return null;
+        if (student == null) {
+            return null;
+        }
         return StudentDto.builder()
                 .id(student.getId())
                 .name(student.getName())
                 .email(student.getEmail())
                 .enrollmentDate(student.getEnrollmentDate())
                 .courses(student.getCourses() != null
-                        ? student.getCourses().stream().map(courseMapper::mapToShortDto).collect(Collectors.toList())
+                        ? student.getCourses().stream()
+                                .map(courseMapper::mapToShortDto)
+                                .collect(Collectors.toList())
                         : Collections.emptyList())
                 .build();
     }
 
     public Student mapToEntity(StudentDto dto) {
-        if (dto == null) return null;
+        if (dto == null) {
+            return null;
+        }
         return Student.builder()
                 .id(dto.getId())
                 .name(dto.getName())

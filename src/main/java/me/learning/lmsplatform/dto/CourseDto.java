@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,5 +17,6 @@ public class CourseDto {
   private Integer durationWeeks;
   private TeacherShortDto teacher;
   private CategoryShortDto category;
-  private List<LessonDto> lessons;
+  private Long teacherId;
+  private Long categoryId;
 }

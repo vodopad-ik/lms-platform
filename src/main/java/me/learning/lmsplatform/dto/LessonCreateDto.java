@@ -9,13 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LessonDto {
-    private Long id;
+public class LessonCreateDto {
     private String title;
     private String content;
     private Integer durationMinutes;
     private String videoUrl;
-    private CourseShortDto course;
-    /** Optional: for creating a lesson with a course via POST /api/lessons. */
-    private Long courseId;
 }

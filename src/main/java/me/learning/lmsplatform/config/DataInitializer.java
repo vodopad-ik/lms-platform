@@ -67,16 +67,6 @@ public class DataInitializer implements CommandLineRunner {
                 .build());
 
             // 4. Courses
-            Course java = courseRepository.save(Course.builder()
-                .title("Java Masterclass")
-                .description("Complete Java roadmap for enterprise")
-                .teacher(peters)
-                .category(devCat)
-                .price(199.99)
-                .durationWeeks(12)
-                .students(Set.of(vlat, marina))
-                .build());
-
             courseRepository.save(Course.builder()
                 .title("Python for Data")
                 .description("Analytics and ML with Python")
@@ -113,6 +103,17 @@ public class DataInitializer implements CommandLineRunner {
                 .category(devCat)
                 .price(120.0)
                 .durationWeeks(8)
+                .build());
+
+            // 4. Courses
+            Course java = courseRepository.save(Course.builder()
+                .title("Java Masterclass")
+                .description("Complete Java roadmap for enterprise")
+                .teacher(peters)
+                .category(devCat)
+                .price(199.99)
+                .durationWeeks(12)
+                .students(Set.of(vlat, marina))
                 .build());
 
             // 5. Lessons for one course (Java)

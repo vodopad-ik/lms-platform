@@ -1,17 +1,16 @@
 package me.learning.lmsplatform.mapper;
 
-import java.util.Collections;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import me.learning.lmsplatform.dto.*;
+import me.learning.lmsplatform.dto.CategoryShortDto;
+import me.learning.lmsplatform.dto.CourseDto;
+import me.learning.lmsplatform.dto.CourseShortDto;
+import me.learning.lmsplatform.dto.TeacherShortDto;
 import me.learning.lmsplatform.model.Course;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CourseMapper {
-
-  private final LessonMapper lessonMapper;
 
   public CourseDto mapToDto(Course course) {
     if (course == null) {
@@ -31,9 +30,6 @@ public class CourseMapper {
                 .id(course.getCategory().getId())
                 .name(course.getCategory().getName())
                 .build() : null)
-        .lessons(course.getLessons() != null 
-            ? course.getLessons().stream().map(lessonMapper::mapToDto).collect(Collectors.toList())
-            : Collections.emptyList())
         .build();
   }
 
@@ -51,7 +47,9 @@ public class CourseMapper {
   }
 
   public CourseShortDto mapToShortDto(Course course) {
-    if (course == null) return null;
+    if (course == null) {
+      return null;
+    }
     return CourseShortDto.builder()
         .id(course.getId())
         .title(course.getTitle())
