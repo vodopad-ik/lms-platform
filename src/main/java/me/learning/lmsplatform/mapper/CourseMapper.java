@@ -6,6 +6,7 @@ import me.learning.lmsplatform.dto.CourseDto;
 import me.learning.lmsplatform.dto.CourseShortDto;
 import me.learning.lmsplatform.dto.TeacherShortDto;
 import me.learning.lmsplatform.model.Course;
+import me.learning.lmsplatform.repository.CourseProjection;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,6 +30,27 @@ public class CourseMapper {
         .category(course.getCategory() != null ? CategoryShortDto.builder()
                 .id(course.getCategory().getId())
                 .name(course.getCategory().getName())
+                .build() : null)
+        .build();
+  }
+
+  public CourseDto mapToDto(CourseProjection projection) {
+    if (projection == null) {
+      return null;
+    }
+    return CourseDto.builder()
+        .id(projection.getId())
+        .title(projection.getTitle())
+        .description(projection.getDescription())
+        .price(projection.getPrice())
+        .durationWeeks(projection.getDurationWeeks())
+        .teacher(projection.getTeacherId() != null ? TeacherShortDto.builder()
+                .id(projection.getTeacherId())
+                .name(projection.getTeacherName())
+                .build() : null)
+        .category(projection.getCategoryId() != null ? CategoryShortDto.builder()
+                .id(projection.getCategoryId())
+                .name(projection.getCategoryName())
                 .build() : null)
         .build();
   }

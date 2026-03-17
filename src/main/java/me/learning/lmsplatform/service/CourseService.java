@@ -2,6 +2,9 @@ package me.learning.lmsplatform.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import me.learning.lmsplatform.cache.CourseQueryCache;
+import me.learning.lmsplatform.cache.CourseQueryCacheKey;
+import me.learning.lmsplatform.cache.QueryMode;
 import me.learning.lmsplatform.dto.CourseDto;
 import me.learning.lmsplatform.dto.CoursePatchDto;
 import me.learning.lmsplatform.dto.LessonCreateDto;
@@ -15,10 +18,14 @@ import me.learning.lmsplatform.model.Lesson;
 import me.learning.lmsplatform.model.Student;
 import me.learning.lmsplatform.model.Teacher;
 import me.learning.lmsplatform.repository.CategoryRepository;
+import me.learning.lmsplatform.repository.CourseProjection;
 import me.learning.lmsplatform.repository.CourseRepository;
 import me.learning.lmsplatform.repository.LessonRepository;
 import me.learning.lmsplatform.repository.StudentRepository;
 import me.learning.lmsplatform.repository.TeacherRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,6 +44,7 @@ public class CourseService {
     private final CategoryRepository categoryRepository;
     private final CourseMapper courseMapper;
     private final LessonMapper lessonMapper;
+    private final CourseQueryCache courseQueryCache;
 
     public List<CourseDto> getAllCourses() {
         return courseRepository.findAll().stream()
@@ -60,7 +68,9 @@ public class CourseService {
     public CourseDto createCourse(CourseDto courseDto) {
         Course course = courseMapper.mapToEntity(courseDto);
         applyTeacherAndCategory(course, courseDto.getTeacherId(), courseDto.getCategoryId());
-        return courseMapper.mapToDto(courseRepository.save(course));
+        Course saved = courseRepository.save(course);
+        invalidateCache();
+        return courseMapper.mapToDto(saved);
     }
 
     public CourseDto updateCourse(Long id, CourseDto courseDto) {
@@ -71,7 +81,9 @@ public class CourseService {
         existing.setPrice(courseDto.getPrice());
         existing.setDurationWeeks(courseDto.getDurationWeeks());
         applyTeacherAndCategory(existing, courseDto.getTeacherId(), courseDto.getCategoryId());
-        return courseMapper.mapToDto(courseRepository.save(existing));
+        Course saved = courseRepository.save(existing);
+        invalidateCache();
+        return courseMapper.mapToDto(saved);
     }
 
     public CourseDto patchCourse(Long id, CoursePatchDto patchDto) {
@@ -92,11 +104,14 @@ public class CourseService {
         if (patchDto.getTeacherId() != null || patchDto.getCategoryId() != null) {
             applyTeacherAndCategory(existing, patchDto.getTeacherId(), patchDto.getCategoryId());
         }
-        return courseMapper.mapToDto(courseRepository.save(existing));
+        Course saved = courseRepository.save(existing);
+        invalidateCache();
+        return courseMapper.mapToDto(saved);
     }
 
     public void deleteCourse(Long id) {
         courseRepository.deleteById(id);
+        invalidateCache();
     }
 
     public CourseDto addStudentToCourse(Long courseId, Long studentId) {
@@ -106,7 +121,9 @@ public class CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         STUDENT_NOT_FOUND_MSG + studentId));
         course.getStudents().add(student);
-        return courseMapper.mapToDto(courseRepository.save(course));
+        Course saved = courseRepository.save(course);
+        invalidateCache();
+        return courseMapper.mapToDto(saved);
     }
 
     public LessonDto addLessonToCourse(Long courseId, LessonCreateDto lessonDto) {
@@ -114,7 +131,9 @@ public class CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND_MSG + courseId));
         Lesson lesson = lessonMapper.mapCreateToEntity(lessonDto);
         lesson.setCourse(course);
-        return lessonMapper.mapToDto(lessonRepository.save(lesson));
+        Lesson saved = lessonRepository.save(lesson);
+        invalidateCache();
+        return lessonMapper.mapToDto(saved);
     }
 
     public List<LessonDto> getLessonsByCourseId(Long courseId) {
@@ -124,6 +143,49 @@ public class CourseService {
         return lessonRepository.findByCourseId(courseId).stream()
                 .map(lessonMapper::mapToDto)
                 .toList();
+    }
+
+    public Page<CourseDto> searchCourses(
+        String department,
+        String categoryName,
+        Double minPrice,
+        Double maxPrice,
+        Pageable pageable,
+        QueryMode queryMode) {
+        CourseQueryCacheKey key = CourseQueryCacheKey.from(
+            queryMode, department, categoryName, minPrice, maxPrice, pageable);
+        return courseQueryCache.getOrLoad(
+            key,
+            () -> fetchCoursesWithFilters(
+                department, categoryName, minPrice, maxPrice, pageable, queryMode));
+    }
+
+    private Page<CourseDto> fetchCoursesWithFilters(
+        String department,
+        String categoryName,
+        Double minPrice,
+        Double maxPrice,
+        Pageable pageable,
+        QueryMode queryMode) {
+        if (queryMode == QueryMode.NATIVE) {
+            Page<CourseProjection> projectionPage = courseRepository.findWithFiltersNative(
+                department, categoryName, minPrice, maxPrice, pageable);
+            return mapProjectionPage(projectionPage, pageable);
+        }
+        return courseRepository.findWithFilters(
+            department, categoryName, minPrice, maxPrice, pageable)
+            .map(courseMapper::mapToDto);
+    }
+
+    private Page<CourseDto> mapProjectionPage(
+        Page<CourseProjection> projectionPage,
+        Pageable pageable) {
+        return new PageImpl<>(
+            projectionPage.stream()
+                .map(courseMapper::mapToDto)
+                .toList(),
+            pageable,
+            projectionPage.getTotalElements());
     }
 
     private void applyTeacherAndCategory(Course course, Long teacherId, Long categoryId) {
@@ -139,5 +201,9 @@ public class CourseService {
                             CATEGORY_NOT_FOUND_MSG + categoryId));
             course.setCategory(category);
         }
+    }
+
+    private void invalidateCache() {
+        courseQueryCache.invalidateAll();
     }
 }

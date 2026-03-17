@@ -2,11 +2,14 @@ package me.learning.lmsplatform.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import me.learning.lmsplatform.cache.QueryMode;
 import me.learning.lmsplatform.dto.CourseDto;
 import me.learning.lmsplatform.dto.CoursePatchDto;
 import me.learning.lmsplatform.dto.LessonCreateDto;
 import me.learning.lmsplatform.dto.LessonDto;
 import me.learning.lmsplatform.service.CourseService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,6 +55,28 @@ public class CourseController {
   @GetMapping("/search")
   public ResponseEntity<CourseDto> getCourseByTitle(@RequestParam String title) {
     return ResponseEntity.ok(courseService.getCourseByTitle(title));
+  }
+
+  @GetMapping("/filter")
+  public ResponseEntity<Page<CourseDto>> filterCourses(
+      @RequestParam(required = false) String department,
+      @RequestParam(required = false) String category,
+      @RequestParam(required = false) Double minPrice,
+      @RequestParam(required = false) Double maxPrice,
+      Pageable pageable) {
+    return ResponseEntity.ok(courseService.searchCourses(
+        department, category, minPrice, maxPrice, pageable, QueryMode.JPQL));
+  }
+
+  @GetMapping("/filter/native")
+  public ResponseEntity<Page<CourseDto>> filterCoursesNative(
+      @RequestParam(required = false) String department,
+      @RequestParam(required = false) String category,
+      @RequestParam(required = false) Double minPrice,
+      @RequestParam(required = false) Double maxPrice,
+      Pageable pageable) {
+    return ResponseEntity.ok(courseService.searchCourses(
+        department, category, minPrice, maxPrice, pageable, QueryMode.NATIVE));
   }
 
   @PostMapping
