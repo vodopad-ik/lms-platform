@@ -17,21 +17,29 @@ public final class CourseQueryCacheKey {
 
   private CourseQueryCacheKey(
       QueryMode queryMode,
+      FilterParams filterParams,
+      PaginationParams paginationParams) {
+    this.queryMode = Objects.requireNonNull(queryMode, "queryMode");
+    this.teacherDepartment = filterParams.teacherDepartment;
+    this.categoryName = filterParams.categoryName;
+    this.minPrice = filterParams.minPrice;
+    this.maxPrice = filterParams.maxPrice;
+    this.page = paginationParams.page;
+    this.size = paginationParams.size;
+    this.sortOrders = paginationParams.sortOrders;
+  }
+
+  private record FilterParams(
       String teacherDepartment,
       String categoryName,
       Double minPrice,
-      Double maxPrice,
+      Double maxPrice) {
+  }
+
+  private record PaginationParams(
       int page,
       int size,
       List<String> sortOrders) {
-    this.queryMode = Objects.requireNonNull(queryMode, "queryMode");
-    this.teacherDepartment = teacherDepartment;
-    this.categoryName = categoryName;
-    this.minPrice = minPrice;
-    this.maxPrice = maxPrice;
-    this.page = page;
-    this.size = size;
-    this.sortOrders = sortOrders == null ? List.of() : List.copyOf(sortOrders);
   }
 
   public static CourseQueryCacheKey from(
@@ -43,15 +51,14 @@ public final class CourseQueryCacheKey {
       Pageable pageable) {
     int page = pageable == null ? 0 : pageable.getPageNumber();
     int size = pageable == null ? 20 : pageable.getPageSize();
-    return new CourseQueryCacheKey(
-        queryMode,
-        teacherDepartment,
-        categoryName,
-        minPrice,
-        maxPrice,
-        page,
-        size,
-        buildSortOrders(pageable));
+    List<String> sortOrders = buildSortOrders(pageable);
+
+    FilterParams filterParams = new FilterParams(
+        teacherDepartment, categoryName, minPrice, maxPrice);
+    PaginationParams paginationParams = new PaginationParams(
+        page, size, sortOrders);
+
+    return new CourseQueryCacheKey(queryMode, filterParams, paginationParams);
   }
 
   private static List<String> buildSortOrders(Pageable pageable) {
