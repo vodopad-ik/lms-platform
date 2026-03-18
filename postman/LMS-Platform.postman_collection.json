@@ -1,0 +1,671 @@
+{
+  "info": {
+    "_postman_id": "2f77b9f0-4c6d-4b0d-8b5c-2d4a1a0b8d6a",
+    "name": "LMS Platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "courseId",
+      "value": "5"
+    },
+    {
+      "key": "studentId",
+      "value": "1"
+    },
+    {
+      "key": "lessonId",
+      "value": "1"
+    },
+    {
+      "key": "teacherId",
+      "value": "1"
+    },
+    {
+      "key": "categoryId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Courses",
+      "item": [
+        {
+          "name": "Get all courses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          }
+        },
+        {
+          "name": "Get course by id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            }
+          }
+        },
+        {
+          "name": "Search course by title",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/search?title=Java%20Masterclass",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "search"],
+              "query": [
+                { "key": "title", "value": "Java Masterclass" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create course (teacherId/categoryId supported)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Spring Boot\",\n  \"description\": \"REST + JPA\",\n  \"price\": 199.99,\n  \"durationWeeks\": 8,\n  \"teacherId\": {{teacherId}},\n  \"categoryId\": {{categoryId}}\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          }
+        },
+        {
+          "name": "Update course (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Spring Boot Advanced\",\n  \"description\": \"Security + Testing\",\n  \"price\": 249.99,\n  \"durationWeeks\": 10,\n  \"teacherId\": {{teacherId}},\n  \"categoryId\": {{categoryId}}\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            }
+          }
+        },
+        {
+          "name": "Patch course (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Patched title\",\n  \"minPrice\": null\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete course",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            }
+          }
+        },
+        {
+          "name": "Filter courses (JPQL + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/filter?department=Software%20Engineering&category=Development&minPrice=0&maxPrice=500&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "filter"],
+              "query": [
+                { "key": "department", "value": "Software Engineering" },
+                { "key": "category", "value": "Development" },
+                { "key": "minPrice", "value": "0" },
+                { "key": "maxPrice", "value": "500" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter courses (NATIVE + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/filter/native?department=Software%20Engineering&category=Development&minPrice=0&maxPrice=500&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "filter", "native"],
+              "query": [
+                { "key": "department", "value": "Software Engineering" },
+                { "key": "category", "value": "Development" },
+                { "key": "minPrice", "value": "0" },
+                { "key": "maxPrice", "value": "500" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add student to course",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}", "students", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get course lessons",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}", "lessons"]
+            }
+          }
+        },
+        {
+          "name": "Add lesson to course",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"New lesson\",\n  \"content\": \"Demo invalidation\",\n  \"durationMinutes\": 10,\n  \"videoUrl\": \"http://example.com\"\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}", "lessons"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lessons",
+      "item": [
+        {
+          "name": "Get all lessons",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"]
+            }
+          }
+        },
+        {
+          "name": "Get lesson by id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/{{lessonId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons", "{{lessonId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create lesson (optional courseId)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Standalone lesson\",\n  \"content\": \"Some content\",\n  \"durationMinutes\": 30,\n  \"videoUrl\": \"http://example.com\",\n  \"courseId\": {{courseId}}\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"]
+            }
+          }
+        },
+        {
+          "name": "Update lesson (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated lesson\",\n  \"content\": \"Updated content\",\n  \"durationMinutes\": 45,\n  \"videoUrl\": \"http://example.com\",\n  \"courseId\": {{courseId}}\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/{{lessonId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons", "{{lessonId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete lesson",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/{{lessonId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons", "{{lessonId}}"]
+            }
+          }
+        },
+        {
+          "name": "Filter lessons (JPQL + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/filter?courseId={{courseId}}&courseTitle=Java&title=Intro&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons", "filter"],
+              "query": [
+                { "key": "courseId", "value": "{{courseId}}" },
+                { "key": "courseTitle", "value": "Java" },
+                { "key": "title", "value": "Intro" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter lessons (NATIVE + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/filter/native?courseId={{courseId}}&courseTitle=Java&title=Intro&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons", "filter", "native"],
+              "query": [
+                { "key": "courseId", "value": "{{courseId}}" },
+                { "key": "courseTitle", "value": "Java" },
+                { "key": "title", "value": "Intro" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Teachers",
+      "item": [
+        {
+          "name": "Get all teachers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers"]
+            }
+          }
+        },
+        {
+          "name": "Get teacher by id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/{{teacherId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "{{teacherId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create teacher",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Teacher\",\n  \"email\": \"teacher@example.com\",\n  \"department\": \"Software Engineering\",\n  \"experienceYears\": 3\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers"]
+            }
+          }
+        },
+        {
+          "name": "Update teacher (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Teacher\",\n  \"department\": \"DevOps\"\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/{{teacherId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "{{teacherId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete teacher",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/{{teacherId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "{{teacherId}}"]
+            }
+          }
+        },
+        {
+          "name": "Filter teachers (JPQL + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/filter?name=Alice&department=Software%20Engineering&courseCategory=Development&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "filter"],
+              "query": [
+                { "key": "name", "value": "Alice" },
+                { "key": "department", "value": "Software Engineering" },
+                { "key": "courseCategory", "value": "Development" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter teachers (NATIVE + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/filter/native?name=Alice&department=Software%20Engineering&courseCategory=Development&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "filter", "native"],
+              "query": [
+                { "key": "name", "value": "Alice" },
+                { "key": "department", "value": "Software Engineering" },
+                { "key": "courseCategory", "value": "Development" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Get all students",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            }
+          }
+        },
+        {
+          "name": "Get student by id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mark\",\n  \"email\": \"mark@example.com\",\n  \"enrollmentDate\": \"2026-04-04\"\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            }
+          }
+        },
+        {
+          "name": "Update student (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Mark\",\n  \"email\": \"mark@example.com\",\n  \"enrollmentDate\": \"2026-04-10\"\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete student",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Filter students (JPQL + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students/filter?name=Vlad&email=example&courseTitle=Java&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "filter"],
+              "query": [
+                { "key": "name", "value": "Vlad" },
+                { "key": "email", "value": "example" },
+                { "key": "courseTitle", "value": "Java" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter students (NATIVE + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students/filter/native?name=Vlad&email=example&courseTitle=Java&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "filter", "native"],
+              "query": [
+                { "key": "name", "value": "Vlad" },
+                { "key": "email", "value": "example" },
+                { "key": "courseTitle", "value": "Java" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get all categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get category by id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "{{categoryId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create category",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"NewCategory\"\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Update category (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"RenamedCategory\"\n}\n"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "{{categoryId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete category",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "{{categoryId}}"]
+            }
+          }
+        },
+        {
+          "name": "Filter categories (JPQL + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/filter?name=Dev&teacherDepartment=Software%20Engineering&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "filter"],
+              "query": [
+                { "key": "name", "value": "Dev" },
+                { "key": "teacherDepartment", "value": "Software Engineering" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter categories (NATIVE + Pageable + Cache)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/filter/native?name=Dev&teacherDepartment=Software%20Engineering&page=0&size=2&sort=id,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "filter", "native"],
+              "query": [
+                { "key": "name", "value": "Dev" },
+                { "key": "teacherDepartment", "value": "Software Engineering" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" },
+                { "key": "sort", "value": "id,desc" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transaction demo",
+      "item": [
+        {
+          "name": "No transaction",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/test/no-transaction",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "no-transaction"]
+            }
+          }
+        },
+        {
+          "name": "With transaction",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/test/with-transaction",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "with-transaction"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+

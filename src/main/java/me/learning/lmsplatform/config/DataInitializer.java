@@ -30,7 +30,6 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (courseRepository.count() == 0) {
-            // 1. Categories
             Category devCat = categoryRepository.save(
                 Category.builder().name("Development").build());
             Category designCat = categoryRepository.save(
@@ -40,7 +39,6 @@ public class DataInitializer implements CommandLineRunner {
             Category devOpsCat = categoryRepository.save(
                 Category.builder().name("DevOps").build());
 
-            // 2. Teachers
             Teacher peters = teacherRepository.save(Teacher.builder()
                 .name("Dr. Peters")
                 .email("peters@university.edu")
@@ -54,7 +52,6 @@ public class DataInitializer implements CommandLineRunner {
                 .experienceYears(8)
                 .build());
 
-            // 3. Students
             Student vlat = studentRepository.save(Student.builder()
                 .name("Vlad")
                 .email("vlad@example.com")
@@ -66,7 +63,6 @@ public class DataInitializer implements CommandLineRunner {
                 .enrollmentDate(LocalDate.now().minusDays(5))
                 .build());
 
-            // 4. Courses
             courseRepository.save(Course.builder()
                 .title("Python for Data")
                 .description("Analytics and ML with Python")
@@ -105,7 +101,6 @@ public class DataInitializer implements CommandLineRunner {
                 .durationWeeks(8)
                 .build());
 
-            // 4. Courses
             Course java = courseRepository.save(Course.builder()
                 .title("Java Masterclass")
                 .description("Complete Java roadmap for enterprise")
@@ -116,7 +111,6 @@ public class DataInitializer implements CommandLineRunner {
                 .students(Set.of(vlat, marina))
                 .build());
 
-            // 5. Lessons for one course (Java)
             java.setLessons(List.of(
                 Lesson.builder().title("Introduction").content("Intro to JVM")
                     .durationMinutes(45).videoUrl("http://vid.us/1")

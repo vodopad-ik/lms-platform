@@ -109,8 +109,6 @@ public class TeacherService {
         teacherPage.getTotalElements());
   }
 
-  // cache invalidation handled by CacheInvalidationService
-
   private static String normalizeLike(String value) {
     return value == null ? "" : value;
   }

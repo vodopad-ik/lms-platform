@@ -16,6 +16,5 @@ public class LessonDto {
     private Integer durationMinutes;
     private String videoUrl;
     private CourseShortDto course;
-    /** Optional: for creating a lesson with a course via POST /api/lessons. */
     private Long courseId;
 }
