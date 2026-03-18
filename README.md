@@ -127,6 +127,8 @@ export DB_PASSWORD=your_password
 *   `PUT /api/courses/{id}` — Полное обновление.
 *   `PATCH /api/courses/{id}` — Частичное обновление.
 *   `DELETE /api/courses/{id}` — Удаление.
+*   `GET /api/courses/filter` — Фильтрация + пагинация (JPQL).
+*   `GET /api/courses/filter/native` — Фильтрация + пагинация (native).
 
 ### Уроки (Lessons API)
 *   `GET /api/lessons` — Список всех уроков.
@@ -134,6 +136,35 @@ export DB_PASSWORD=your_password
 *   `POST /api/lessons` — Создание урока (опционально `courseId` в body для привязки к курсу).
 *   `PUT /api/lessons/{id}` — Обновление урока.
 *   `DELETE /api/lessons/{id}` — Удаление урока.
+*   `GET /api/lessons/filter` — Фильтрация + пагинация (JPQL).
+*   `GET /api/lessons/filter/native` — Фильтрация + пагинация (native).
+
+### Учителя (Teachers API)
+*   `GET /api/teachers` — Список учителей.
+*   `GET /api/teachers/{id}` — Детали учителя.
+*   `POST /api/teachers` — Создание учителя.
+*   `PUT /api/teachers/{id}` — Обновление учителя.
+*   `DELETE /api/teachers/{id}` — Удаление учителя.
+*   `GET /api/teachers/filter` — Фильтрация + пагинация (JPQL).
+*   `GET /api/teachers/filter/native` — Фильтрация + пагинация (native).
+
+### Студенты (Students API)
+*   `GET /api/students` — Список студентов.
+*   `GET /api/students/{id}` — Детали студента.
+*   `POST /api/students` — Создание студента.
+*   `PUT /api/students/{id}` — Обновление студента.
+*   `DELETE /api/students/{id}` — Удаление студента.
+*   `GET /api/students/filter` — Фильтрация + пагинация (JPQL).
+*   `GET /api/students/filter/native` — Фильтрация + пагинация (native).
+
+### Категории (Categories API)
+*   `GET /api/categories` — Список категорий.
+*   `GET /api/categories/{id}` — Детали категории.
+*   `POST /api/categories` — Создание категории.
+*   `PUT /api/categories/{id}` — Обновление категории.
+*   `DELETE /api/categories/{id}` — Удаление категории.
+*   `GET /api/categories/filter` — Фильтрация + пагинация (JPQL).
+*   `GET /api/categories/filter/native` — Фильтрация + пагинация (native).
 
 ### Демонстрация транзакций
 *   `POST /api/test/no-transaction` — Попытка сохранения без `@Transactional` (демонстрирует частичное сохранение при ошибке).

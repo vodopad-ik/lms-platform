@@ -2,9 +2,13 @@ package me.learning.lmsplatform.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import me.learning.lmsplatform.cache.QueryMode;
 import me.learning.lmsplatform.dto.TeacherDto;
-import me.learning.lmsplatform.mapper.TeacherMapper;
-import me.learning.lmsplatform.repository.TeacherRepository;
+import me.learning.lmsplatform.service.TeacherService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,56 +24,54 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TeacherController {
 
-    private final TeacherRepository teacherRepository;
-    private final TeacherMapper teacherMapper;
+    private final TeacherService teacherService;
 
     @GetMapping
-    public List<TeacherDto> getAll() {
-        return teacherRepository.findAll().stream()
-                .map(teacherMapper::mapToDto)
-                .toList();
+    public ResponseEntity<List<TeacherDto>> getAllTeachers() {
+        return ResponseEntity.ok(teacherService.getAllTeachers());
     }
 
     @GetMapping("/{id}")
-    public TeacherDto getTeacher(@PathVariable Long id) {
-        if (id == null) {
-            return null;
-        }
-        return teacherRepository.findById(id)
-                .map(teacherMapper::mapToDto)
-                .orElse(null);
+    public ResponseEntity<TeacherDto> getTeacher(@PathVariable Long id) {
+        return ResponseEntity.ok(teacherService.getTeacherById(id));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<TeacherDto>> filterTeachers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String courseCategory,
+            Pageable pageable) {
+        return ResponseEntity.ok(teacherService.searchTeachers(
+                name, department, courseCategory, pageable, QueryMode.JPQL));
+    }
+
+    @GetMapping("/filter/native")
+    public ResponseEntity<Page<TeacherDto>> filterTeachersNative(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String courseCategory,
+            Pageable pageable) {
+        return ResponseEntity.ok(teacherService.searchTeachers(
+                name, department, courseCategory, pageable, QueryMode.NATIVE));
     }
 
     @PostMapping
-    public TeacherDto createTeacher(@RequestBody TeacherDto teacherDto) {
-        if (teacherDto == null) {
-            return null;
-        }
-        return teacherMapper.mapToDto(teacherRepository.save(
-                teacherMapper.mapToEntity(teacherDto)));
+    public ResponseEntity<TeacherDto> createTeacher(@RequestBody TeacherDto teacherDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(teacherService.createTeacher(teacherDto));
     }
 
     @PutMapping("/{id}")
-    public TeacherDto updateTeacher(@PathVariable Long id,
-                                   @RequestBody TeacherDto teacherDetails) {
-        if (id == null || teacherDetails == null) {
-            return null;
-        }
-        return teacherRepository.findById(id)
-                .map(teacher -> {
-                    teacher.setName(teacherDetails.getName());
-                    teacher.setEmail(teacherDetails.getEmail());
-                    teacher.setDepartment(teacherDetails.getDepartment());
-                    teacher.setExperienceYears(teacherDetails.getExperienceYears());
-                    return teacherMapper.mapToDto(teacherRepository.save(teacher));
-                })
-                .orElse(null);
+    public ResponseEntity<TeacherDto> updateTeacher(
+            @PathVariable Long id,
+            @RequestBody TeacherDto teacherDto) {
+        return ResponseEntity.ok(teacherService.updateTeacher(id, teacherDto));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTeacher(@PathVariable Long id) {
-        if (id != null) {
-            teacherRepository.deleteById(id);
-        }
+    public ResponseEntity<Void> deleteTeacher(@PathVariable Long id) {
+        teacherService.deleteTeacher(id);
+        return ResponseEntity.noContent().build();
     }
 }

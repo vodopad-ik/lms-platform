@@ -2,9 +2,13 @@ package me.learning.lmsplatform.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import me.learning.lmsplatform.cache.QueryMode;
 import me.learning.lmsplatform.dto.CategoryDto;
-import me.learning.lmsplatform.mapper.CategoryMapper;
-import me.learning.lmsplatform.repository.CategoryRepository;
+import me.learning.lmsplatform.service.CategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,53 +24,52 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private final CategoryRepository categoryRepository;
-    private final CategoryMapper categoryMapper;
+    private final CategoryService categoryService;
 
     @GetMapping
-    public List<CategoryDto> getAll() {
-        return categoryRepository.findAll().stream()
-                .map(categoryMapper::mapToDto)
-                .toList();
+    public ResponseEntity<List<CategoryDto>> getAll() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
-    public CategoryDto getCategory(@PathVariable Long id) {
-        if (id == null) {
-            return null;
-        }
-        return categoryRepository.findById(id)
-                .map(categoryMapper::mapToDto)
-                .orElse(null);
+    public ResponseEntity<CategoryDto> getCategory(@PathVariable Long id) {
+        return ResponseEntity.ok(categoryService.getCategoryById(id));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<CategoryDto>> filterCategories(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String teacherDepartment,
+        Pageable pageable) {
+        return ResponseEntity.ok(categoryService.searchCategories(
+            name, teacherDepartment, pageable, QueryMode.JPQL));
+    }
+
+    @GetMapping("/filter/native")
+    public ResponseEntity<Page<CategoryDto>> filterCategoriesNative(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String teacherDepartment,
+        Pageable pageable) {
+        return ResponseEntity.ok(categoryService.searchCategories(
+            name, teacherDepartment, pageable, QueryMode.NATIVE));
     }
 
     @PostMapping
-    public CategoryDto createCategory(@RequestBody CategoryDto categoryDto) {
-        if (categoryDto == null) {
-            return null;
-        }
-        return categoryMapper.mapToDto(categoryRepository.save(
-                categoryMapper.mapToEntity(categoryDto)));
+    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(categoryService.createCategory(categoryDto));
     }
 
     @PutMapping("/{id}")
-    public CategoryDto updateCategory(@PathVariable Long id,
-                                      @RequestBody CategoryDto categoryDetails) {
-        if (id == null || categoryDetails == null) {
-            return null;
-        }
-        return categoryRepository.findById(id)
-                .map(category -> {
-                    category.setName(categoryDetails.getName());
-                    return categoryMapper.mapToDto(categoryRepository.save(category));
-                })
-                .orElse(null);
+    public ResponseEntity<CategoryDto> updateCategory(
+        @PathVariable Long id,
+        @RequestBody CategoryDto categoryDetails) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, categoryDetails));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable Long id) {
-        if (id != null) {
-            categoryRepository.deleteById(id);
-        }
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 }

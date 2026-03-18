@@ -24,13 +24,15 @@ public class CourseMapper {
         .price(course.getPrice())
         .durationWeeks(course.getDurationWeeks())
         .teacher(course.getTeacher() != null ? TeacherShortDto.builder()
-                .id(course.getTeacher().getId())
-                .name(course.getTeacher().getName())
-                .build() : null)
+            .id(course.getTeacher().getId())
+            .name(course.getTeacher().getName())
+            .build() : null)
         .category(course.getCategory() != null ? CategoryShortDto.builder()
-                .id(course.getCategory().getId())
-                .name(course.getCategory().getName())
-                .build() : null)
+            .id(course.getCategory().getId())
+            .name(course.getCategory().getName())
+            .build() : null)
+        .teacherId(course.getTeacher() != null ? course.getTeacher().getId() : null)
+        .categoryId(course.getCategory() != null ? course.getCategory().getId() : null)
         .build();
   }
 
@@ -45,13 +47,15 @@ public class CourseMapper {
         .price(projection.getPrice())
         .durationWeeks(projection.getDurationWeeks())
         .teacher(projection.getTeacherId() != null ? TeacherShortDto.builder()
-                .id(projection.getTeacherId())
-                .name(projection.getTeacherName())
-                .build() : null)
+            .id(projection.getTeacherId())
+            .name(projection.getTeacherName())
+            .build() : null)
         .category(projection.getCategoryId() != null ? CategoryShortDto.builder()
-                .id(projection.getCategoryId())
-                .name(projection.getCategoryName())
-                .build() : null)
+            .id(projection.getCategoryId())
+            .name(projection.getCategoryName())
+            .build() : null)
+        .teacherId(projection.getTeacherId())
+        .categoryId(projection.getCategoryId())
         .build();
   }
 

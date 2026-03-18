@@ -1,11 +1,14 @@
 package me.learning.lmsplatform.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,4 +30,8 @@ public class Category {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @JsonIgnoreProperties({"category", "hibernateLazyInitializer", "handler"})
+    @OneToMany(mappedBy = "category")
+    private List<Course> courses;
 }

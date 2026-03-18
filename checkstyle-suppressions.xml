@@ -10,4 +10,6 @@
     <suppress checks="JavadocVariable" files=".*\.java"/>
     <suppress checks="JavadocStyle" files=".*\.java"/>
     <suppress checks="Indentation" files=".*\.java"/>
+    <suppress checks="LineLength"
+        files="StudentRepository\.java|TeacherRepository\.java|LessonRepository\.java"/>
 </suppressions>

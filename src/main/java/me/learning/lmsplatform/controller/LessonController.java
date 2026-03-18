@@ -2,12 +2,13 @@ package me.learning.lmsplatform.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import me.learning.lmsplatform.cache.QueryMode;
 import me.learning.lmsplatform.dto.LessonDto;
-import me.learning.lmsplatform.exception.ResourceNotFoundException;
-import me.learning.lmsplatform.mapper.LessonMapper;
-import me.learning.lmsplatform.model.Lesson;
-import me.learning.lmsplatform.repository.CourseRepository;
-import me.learning.lmsplatform.repository.LessonRepository;
+import me.learning.lmsplatform.service.LessonService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,61 +24,53 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LessonController {
 
-    private final LessonRepository lessonRepository;
-    private final CourseRepository courseRepository;
-    private final LessonMapper lessonMapper;
+    private final LessonService lessonService;
 
     @GetMapping
-    public List<LessonDto> getAll() {
-        return lessonRepository.findAll().stream()
-                .map(lessonMapper::mapToDto)
-                .toList();
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteLesson(@PathVariable Long id) {
-        if (id != null) {
-            lessonRepository.deleteById(id);
-        }
+    public ResponseEntity<List<LessonDto>> getAll() {
+        return ResponseEntity.ok(lessonService.getAllLessons());
     }
 
     @GetMapping("/{id}")
-    public LessonDto getLesson(@PathVariable Long id) {
-        if (id == null) {
-            return null;
-        }
-        return lessonRepository.findById(id)
-                .map(lessonMapper::mapToDto)
-                .orElse(null);
+    public ResponseEntity<LessonDto> getLesson(@PathVariable Long id) {
+        return ResponseEntity.ok(lessonService.getLessonById(id));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<LessonDto>> filterLessons(
+        @RequestParam(required = false) Long courseId,
+        @RequestParam(required = false) String courseTitle,
+        @RequestParam(required = false) String title,
+        Pageable pageable) {
+        return ResponseEntity.ok(lessonService.searchLessons(
+            courseId, courseTitle, title, pageable, QueryMode.JPQL));
+    }
+
+    @GetMapping("/filter/native")
+    public ResponseEntity<Page<LessonDto>> filterLessonsNative(
+        @RequestParam(required = false) Long courseId,
+        @RequestParam(required = false) String courseTitle,
+        @RequestParam(required = false) String title,
+        Pageable pageable) {
+        return ResponseEntity.ok(lessonService.searchLessons(
+            courseId, courseTitle, title, pageable, QueryMode.NATIVE));
     }
 
     @PostMapping
-    public LessonDto createLesson(@RequestBody LessonDto lessonDto) {
-        if (lessonDto == null) {
-            return null;
-        }
-        Lesson lesson = lessonMapper.mapToEntity(lessonDto);
-        if (lessonDto.getCourseId() != null) {
-            lesson.setCourse(courseRepository.findById(lessonDto.getCourseId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Course not found with id: " + lessonDto.getCourseId())));
-        }
-        return lessonMapper.mapToDto(lessonRepository.save(lesson));
+    public ResponseEntity<LessonDto> createLesson(@RequestBody LessonDto lessonDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(lessonService.createLesson(lessonDto));
     }
 
     @PutMapping("/{id}")
-    public LessonDto updateLesson(@PathVariable Long id, @RequestBody LessonDto lessonDetails) {
-        if (id == null || lessonDetails == null) {
-            return null;
-        }
-        return lessonRepository.findById(id)
-                .map(lesson -> {
-                    lesson.setTitle(lessonDetails.getTitle());
-                    lesson.setContent(lessonDetails.getContent());
-                    lesson.setDurationMinutes(lessonDetails.getDurationMinutes());
-                    lesson.setVideoUrl(lessonDetails.getVideoUrl());
-                    return lessonMapper.mapToDto(lessonRepository.save(lesson));
-                })
-                .orElse(null);
+    public ResponseEntity<LessonDto> updateLesson(
+        @PathVariable Long id, @RequestBody LessonDto lessonDetails) {
+        return ResponseEntity.ok(lessonService.updateLesson(id, lessonDetails));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLesson(@PathVariable Long id) {
+        lessonService.deleteLesson(id);
+        return ResponseEntity.noContent().build();
     }
 }

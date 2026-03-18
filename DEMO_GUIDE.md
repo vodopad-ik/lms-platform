@@ -79,8 +79,8 @@ GET /api/courses/filter?minPrice=100&maxPrice=200&page=2&size=2
 **Тестирование производительности:**
 
 ```bash
-# Первый запрос (загружается из БД)
-time curl -s "http://localhost:8080/api/courses/filter?minPrice=100&maxPrice=200&page=0&size=3"
+# Первый запрос (загружается из БД)time curl -s "http://localhost:8080/api/courses/filter?minPrice=100&maxPrice=200&page=0&size=3"
+и
 
 # Второй запрос (из кеша - должен быть БЫСТРЕЕ)
 time curl -s "http://localhost:8080/api/courses/filter?minPrice=100&maxPrice=200&page=0&size=3"

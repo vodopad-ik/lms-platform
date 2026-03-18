@@ -45,6 +45,7 @@ public class CourseService {
     private final CourseMapper courseMapper;
     private final LessonMapper lessonMapper;
     private final CourseQueryCache courseQueryCache;
+    private final CacheInvalidationService cacheInvalidationService;
 
     public List<CourseDto> getAllCourses() {
         return courseRepository.findAll().stream()
@@ -69,7 +70,7 @@ public class CourseService {
         Course course = courseMapper.mapToEntity(courseDto);
         applyTeacherAndCategory(course, courseDto.getTeacherId(), courseDto.getCategoryId());
         Course saved = courseRepository.save(course);
-        invalidateCache();
+        cacheInvalidationService.onCourseChanged();
         return courseMapper.mapToDto(saved);
     }
 
@@ -82,7 +83,7 @@ public class CourseService {
         existing.setDurationWeeks(courseDto.getDurationWeeks());
         applyTeacherAndCategory(existing, courseDto.getTeacherId(), courseDto.getCategoryId());
         Course saved = courseRepository.save(existing);
-        invalidateCache();
+        cacheInvalidationService.onCourseChanged();
         return courseMapper.mapToDto(saved);
     }
 
@@ -105,13 +106,13 @@ public class CourseService {
             applyTeacherAndCategory(existing, patchDto.getTeacherId(), patchDto.getCategoryId());
         }
         Course saved = courseRepository.save(existing);
-        invalidateCache();
+        cacheInvalidationService.onCourseChanged();
         return courseMapper.mapToDto(saved);
     }
 
     public void deleteCourse(Long id) {
         courseRepository.deleteById(id);
-        invalidateCache();
+        cacheInvalidationService.onCourseChanged();
     }
 
     public CourseDto addStudentToCourse(Long courseId, Long studentId) {
@@ -122,7 +123,7 @@ public class CourseService {
                         STUDENT_NOT_FOUND_MSG + studentId));
         course.getStudents().add(student);
         Course saved = courseRepository.save(course);
-        invalidateCache();
+        cacheInvalidationService.onCourseChanged();
         return courseMapper.mapToDto(saved);
     }
 
@@ -132,7 +133,7 @@ public class CourseService {
         Lesson lesson = lessonMapper.mapCreateToEntity(lessonDto);
         lesson.setCourse(course);
         Lesson saved = lessonRepository.save(lesson);
-        invalidateCache();
+        cacheInvalidationService.onCourseChanged();
         return lessonMapper.mapToDto(saved);
     }
 
@@ -203,7 +204,4 @@ public class CourseService {
         }
     }
 
-    private void invalidateCache() {
-        courseQueryCache.invalidateAll();
-    }
 }
