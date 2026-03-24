@@ -18,7 +18,9 @@ services:
     container_name: lms-app
     ports:
       - '8080:8080'
+      - '5005:5005'
     environment:
+      - 'JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'
       - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mydatabase'
       - 'SPRING_DATASOURCE_USERNAME=myuser'
       - 'SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-my-safe-password-2026}'

@@ -52,13 +52,14 @@ public class LessonService {
 
   public LessonDto createLesson(LessonDto lessonDto) {
     Lesson lesson = lessonMapper.mapToEntity(lessonDto);
-    if (lessonDto.getCourseId() != null) {
-      courseRepository.findById(lessonDto.getCourseId())
+    Long courseId = lessonDto.getCourse() != null ? lessonDto.getCourse().getId() : null;
+    if (courseId != null) {
+      courseRepository.findById(courseId)
           .ifPresentOrElse(
               lesson::setCourse,
               () -> {
                 throw new ResourceNotFoundException(
-                    COURSE_NOT_FOUND_MSG + lessonDto.getCourseId());
+                    COURSE_NOT_FOUND_MSG + courseId);
               });
     }
     Lesson saved = lessonRepository.save(lesson);
@@ -72,13 +73,14 @@ public class LessonService {
     existing.setTitle(lessonDto.getTitle());
     existing.setContent(lessonDto.getContent());
     existing.setDurationMinutes(lessonDto.getDurationMinutes());
-    if (lessonDto.getCourseId() != null) {
-      courseRepository.findById(lessonDto.getCourseId())
+    Long courseId = lessonDto.getCourse() != null ? lessonDto.getCourse().getId() : null;
+    if (courseId != null) {
+      courseRepository.findById(courseId)
           .ifPresentOrElse(
               existing::setCourse,
               () -> {
                 throw new ResourceNotFoundException(
-                    COURSE_NOT_FOUND_MSG + lessonDto.getCourseId());
+                    COURSE_NOT_FOUND_MSG + courseId);
               });
     }
     Lesson saved = lessonRepository.save(existing);

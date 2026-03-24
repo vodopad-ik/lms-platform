@@ -31,8 +31,6 @@ public class CourseMapper {
             .id(course.getCategory().getId())
             .name(course.getCategory().getName())
             .build() : null)
-        .teacherId(course.getTeacher() != null ? course.getTeacher().getId() : null)
-        .categoryId(course.getCategory() != null ? course.getCategory().getId() : null)
         .build();
   }
 
@@ -54,8 +52,6 @@ public class CourseMapper {
             .id(projection.getCategoryId())
             .name(projection.getCategoryName())
             .build() : null)
-        .teacherId(projection.getTeacherId())
-        .categoryId(projection.getCategoryId())
         .build();
   }
 

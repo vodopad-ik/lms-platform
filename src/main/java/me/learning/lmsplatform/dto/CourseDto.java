@@ -17,6 +17,4 @@ public class CourseDto {
   private Integer durationWeeks;
   private TeacherShortDto teacher;
   private CategoryShortDto category;
-  private Long teacherId;
-  private Long categoryId;
 }

@@ -16,5 +16,4 @@ public class LessonDto {
     private Integer durationMinutes;
     private String videoUrl;
     private CourseShortDto course;
-    private Long courseId;
 }

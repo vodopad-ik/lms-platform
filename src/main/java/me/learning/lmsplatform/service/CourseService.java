@@ -68,7 +68,9 @@ public class CourseService {
 
     public CourseDto createCourse(CourseDto courseDto) {
         Course course = courseMapper.mapToEntity(courseDto);
-        applyTeacherAndCategory(course, courseDto.getTeacherId(), courseDto.getCategoryId());
+        Long teacherId = courseDto.getTeacher() != null ? courseDto.getTeacher().getId() : null;
+        Long categoryId = courseDto.getCategory() != null ? courseDto.getCategory().getId() : null;
+        applyTeacherAndCategory(course, teacherId, categoryId);
         Course saved = courseRepository.save(course);
         cacheInvalidationService.onCourseChanged();
         return courseMapper.mapToDto(saved);
@@ -81,7 +83,9 @@ public class CourseService {
         existing.setDescription(courseDto.getDescription());
         existing.setPrice(courseDto.getPrice());
         existing.setDurationWeeks(courseDto.getDurationWeeks());
-        applyTeacherAndCategory(existing, courseDto.getTeacherId(), courseDto.getCategoryId());
+        Long teacherId = courseDto.getTeacher() != null ? courseDto.getTeacher().getId() : null;
+        Long categoryId = courseDto.getCategory() != null ? courseDto.getCategory().getId() : null;
+        applyTeacherAndCategory(existing, teacherId, categoryId);
         Course saved = courseRepository.save(existing);
         cacheInvalidationService.onCourseChanged();
         return courseMapper.mapToDto(saved);
