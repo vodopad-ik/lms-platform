@@ -1,5 +1,11 @@
 package me.learning.lmsplatform.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.learning.lmsplatform.cache.QueryMode;
@@ -12,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,7 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/courses")
+@Validated
 @RequiredArgsConstructor
+@Tag(name = "Courses", description = "Course management API with advanced filtering and caching")
 public class CourseController {
 
   private final CourseService courseService;
@@ -80,19 +89,33 @@ public class CourseController {
   }
 
   @PostMapping
-  public ResponseEntity<CourseDto> createCourse(@RequestBody CourseDto courseDto) {
+  @Operation(summary = "Create a new course", description = "Creates a new course with validation")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Course created successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid input data"),
+      @ApiResponse(responseCode = "404", description = "Teacher or category not found")
+  })
+  public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseDto courseDto) {
     return ResponseEntity.status(HttpStatus.CREATED).body(courseService.createCourse(courseDto));
   }
 
   @PutMapping("/{id}")
+  @Operation(summary = "Update a course",
+      description = "Updates an existing course with validation")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Course updated successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid input data"),
+      @ApiResponse(responseCode = "404", description = "Course not found")
+  })
   public ResponseEntity<CourseDto> updateCourse(
-      @PathVariable Long id, @RequestBody CourseDto courseDto) {
+      @Parameter(description = "Course ID") @PathVariable Long id,
+      @Valid @RequestBody CourseDto courseDto) {
     return ResponseEntity.ok(courseService.updateCourse(id, courseDto));
   }
 
   @PatchMapping("/{id}")
   public ResponseEntity<CourseDto> patchCourse(
-      @PathVariable Long id, @RequestBody CoursePatchDto patchDto) {
+      @PathVariable Long id, @Valid @RequestBody CoursePatchDto patchDto) {
     return ResponseEntity.ok(courseService.patchCourse(id, patchDto));
   }
 
