@@ -63,7 +63,7 @@ public class DataInitializer implements CommandLineRunner {
                 .enrollmentDate(LocalDate.now().minusDays(5))
                 .build());
 
-            courseRepository.save(Course.builder()
+            courseRepository.save(Course.builder()  
                 .title("Python for Data")
                 .description("Analytics and ML with Python")
                 .teacher(smith)
