@@ -59,8 +59,18 @@
     <logger name="me.learning.lmsplatform.cache" level="DEBUG"/>
     <logger name="me.learning.lmsplatform.repository" level="DEBUG"/>
     <logger name="org.springframework.web" level="DEBUG"/>
-    <logger name="org.hibernate.SQL" level="DEBUG"/>
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+    
+    <!-- Полностью отключаем SQL логирование при старте -->
+    <logger name="org.hibernate.SQL" level="ERROR" additivity="false">
+        <appender-ref ref="FILE-ERROR"/>
+    </logger>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="ERROR"/>
+    
+    <!-- Отключаем стартовые запросы Hibernate -->
+    <logger name="org.hibernate.hql.internal.ast.QueryTranslatorImpl" level="WARN"/>
+    <logger name="org.hibernate.loader.Loader" level="WARN"/>
+    <logger name="org.hibernate.tool.schema.internal.SchemaCreator" level="ERROR"/>
+    <logger name="org.hibernate.tool.schema.internal.SchemaDropper" level="ERROR"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
