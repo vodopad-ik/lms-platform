@@ -15,9 +15,11 @@ import me.learning.lmsplatform.repository.CourseRepository;
 import me.learning.lmsplatform.repository.StudentRepository;
 import me.learning.lmsplatform.repository.TeacherRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConditionalOnProperty(prefix = "app.seed", name = "enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
 public class DataInitializer implements CommandLineRunner {

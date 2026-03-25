@@ -18,7 +18,6 @@ public class HibernateConfig {
 
     @PostConstruct
     public void configureHibernate() {
-        // Полностью отключаем статистику при старте
         Statistics statistics = sessionFactory.getStatistics();
         statistics.setStatisticsEnabled(false);
         log.info("Hibernate statistics disabled to prevent startup queries");
