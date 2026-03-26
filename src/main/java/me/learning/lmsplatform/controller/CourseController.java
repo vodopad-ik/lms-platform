@@ -40,7 +40,7 @@ public class CourseController {
   private final CourseService courseService;
 
   @GetMapping
-  @Operation(summary = "Get all courses", 
+  @Operation(summary = "Get all courses", operationId = "courseGetAll",
       description = "Retrieves a list of all courses with their teachers and categories")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Courses retrieved successfully"),
@@ -51,7 +51,7 @@ public class CourseController {
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Get course by ID", 
+  @Operation(summary = "Get course by ID", operationId = "courseGetById",
       description = "Retrieves a specific course by its ID with full details")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Course found and returned"),
@@ -64,7 +64,7 @@ public class CourseController {
   }
 
   @GetMapping("/{courseId}/lessons")
-  @Operation(summary = "Get course lessons", 
+  @Operation(summary = "Get course lessons", operationId = "courseGetLessons",
       description = "Retrieves all lessons belonging to a specific course")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Lessons retrieved successfully"),
@@ -77,7 +77,7 @@ public class CourseController {
   }
 
   @PostMapping("/{courseId}/lessons")
-  @Operation(summary = "Add lesson to course", 
+  @Operation(summary = "Add lesson to course", operationId = "courseAddLesson",
       description = "Creates a new lesson and adds it to the specified course")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Lesson created and added successfully"),
@@ -92,7 +92,7 @@ public class CourseController {
   }
 
   @GetMapping("/search")
-  @Operation(summary = "Get course by title", 
+  @Operation(summary = "Get course by title", operationId = "courseGetByTitle",
       description = "Searches for a course by its exact title")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Course found and returned"),
@@ -105,7 +105,7 @@ public class CourseController {
   }
 
   @GetMapping("/filter")
-  @Operation(summary = "Filter courses", 
+  @Operation(summary = "Filter courses", operationId = "courseFilterJpql",
       description = "Filters courses by department, category, and price range with pagination. "
           + "Supports both JPQL and Native query modes.")
   @ApiResponses(value = {
@@ -129,7 +129,7 @@ public class CourseController {
   }
 
   @GetMapping("/filter/native")
-  @Operation(summary = "Filter courses (Native Query)", 
+  @Operation(summary = "Filter courses (Native Query)", operationId = "courseFilterNative",
       description = "Filters courses using native SQL queries. "
           + "Same parameters as /filter but uses database-specific SQL.")
   @ApiResponses(value = {
@@ -153,7 +153,8 @@ public class CourseController {
   }
 
   @PostMapping
-  @Operation(summary = "Create a new course", description = "Creates a new course with validation")
+  @Operation(summary = "Create a new course", operationId = "courseCreate",
+      description = "Creates a new course with validation")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Course created successfully"),
       @ApiResponse(responseCode = "400", description = "Invalid input data"),
@@ -164,7 +165,7 @@ public class CourseController {
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Update a course",
+  @Operation(summary = "Update a course", operationId = "courseUpdate",
       description = "Updates an existing course with validation")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Course updated successfully"),
@@ -178,7 +179,7 @@ public class CourseController {
   }
 
   @PatchMapping("/{id}")
-  @Operation(summary = "Partially update a course", 
+  @Operation(summary = "Partially update a course", operationId = "coursePatch",
       description = "Updates specific fields of an existing course. "
           + "Only provided fields will be updated.")
   @ApiResponses(value = {
@@ -193,7 +194,7 @@ public class CourseController {
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "Delete a course", 
+  @Operation(summary = "Delete a course", operationId = "courseDelete",
       description = "Deletes a course by ID. This action is irreversible "
           + "and will invalidate all related caches.")
   @ApiResponses(value = {
@@ -208,7 +209,7 @@ public class CourseController {
   }
 
   @PostMapping("/{courseId}/students/{studentId}")
-  @Operation(summary = "Add student to course", 
+  @Operation(summary = "Add student to course", operationId = "courseAddStudent",
       description = "Enrolls a student in an existing course. "
           + "Updates student-course relationship and invalidates relevant caches.")
   @ApiResponses(value = {

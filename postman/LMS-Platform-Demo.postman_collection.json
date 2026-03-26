@@ -1,0 +1,478 @@
+{
+  "info": {
+    "_postman_id": "2f77b9f0-4c6d-4b0d-8b5c-2d4a1a0b8d6a",
+    "name": "LMS Platform API - Демонстрация 6 функций",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Коллекция для демонстрации всех 6 продвинутых функций: 1) Глобальная обработка ошибок, 2) Валидация, 3) Единый формат ошибок, 4) Logback логирование, 5) AOP логирование, 6) Swagger/OpenAPI"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "description": "Базовый URL приложения"
+    },
+    {
+      "key": "courseId",
+      "value": "5",
+      "description": "ID курса для тестов"
+    },
+    {
+      "key": "studentId", 
+      "value": "1",
+      "description": "ID студента для тестов"
+    },
+    {
+      "key": "lessonId",
+      "value": "1", 
+      "description": "ID урока для тестов"
+    },
+    {
+      "key": "teacherId",
+      "value": "1",
+      "description": "ID преподавателя для тестов"
+    },
+    {
+      "key": "categoryId",
+      "value": "1",
+      "description": "ID категории для тестов"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Глобальная обработка ошибок (@ControllerAdvice)",
+      "description": "Демонстрация единого формата ошибок для всех endpoint",
+      "item": [
+        {
+          "name": "404 Not Found - Курс не найден",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "99999"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "400 Bad Request - Неверный ID",
+          "request": {
+            "method": "GET", 
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/abc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "abc"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "500 Internal Server Error - Ошибка базы данных",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/test/database-error",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "test", "database-error"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Валидация входных данных (@Valid)",
+      "description": "Демонстрация валидации полей DTO",
+      "item": [
+        {
+          "name": "Create Course - Пустой title (NotBlank)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\",\n  \"description\": \"Описание курса\",\n  \"price\": 199.99,\n  \"durationWeeks\": 8,\n  \"teacher\": { \"id\": {{teacherId}} },\n  \"category\": { \"id\": {{categoryId}} }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Course - Отрицательная цена (@Positive)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Тестовый курс\",\n  \"description\": \"Описание курса\",\n  \"price\": -100,\n  \"durationWeeks\": 8,\n  \"teacher\": { \"id\": {{teacherId}} },\n  \"category\": { \"id\": {{categoryId}} }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Course - Нулевая длительность (@Positive)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Тестовый курс\",\n  \"description\": \"Описание курса\",\n  \"price\": 199.99,\n  \"durationWeeks\": 0,\n  \"teacher\": { \"id\": {{teacherId}} },\n  \"category\": { \"id\": {{categoryId}} }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Course - Валидные данные",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Spring Boot Advanced\",\n  \"description\": \"Security + Testing + Performance\",\n  \"price\": 299.99,\n  \"durationWeeks\": 12,\n  \"teacher\": { \"id\": {{teacherId}} },\n  \"category\": { \"id\": {{categoryId}} }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Единый формат ошибок (все endpoint)",
+      "description": "Все ошибки возвращают одинаковый JSON формат",
+      "item": [
+        {
+          "name": "Формат успешного ответа",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Формат ошибки 404",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "99999"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Формат ошибки валидации",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\",\n  \"price\": -100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Logback логирование (уровни + ротация)",
+      "description": "Проверка логирования в файлах и консоли",
+      "item": [
+        {
+          "name": "Проверить основные логи",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            },
+            "description": "После запроса проверь файл ./logs/lms-platform.log"
+          },
+          "response": []
+        },
+        {
+          "name": "Проверить логи ошибок",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "99999"]
+            },
+            "description": "После запроса проверь файл ./logs/lms-platform-error.log"
+          },
+          "response": []
+        },
+        {
+          "name": "Проверить ротацию логов",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            },
+            "description": "Проверь папку ./logs/ - файлы создаются автоматически с ротацией"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. AOP логирование времени выполнения",
+      "description": "Демонстрация логирования времени выполнения сервисных методов",
+      "item": [
+        {
+          "name": "Быстрый запрос (<100ms)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            },
+            "description": "В консоли увидишь: Method executed in Xms (INFO уровень)"
+          },
+          "response": []
+        },
+        {
+          "name": "Медленный запрос (>100ms)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/filter?department=Software%20Engineering&page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "filter"],
+              "query": [
+                { "key": "department", "value": "Software Engineering" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "В консоли увидишь: Method executed in Xms (WARN уровень)"
+          },
+          "response": []
+        },
+        {
+          "name": "Множественные запросы (AOP на каждый)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers"]
+            },
+            "description": "В консоли увидишь логи для каждого вызванного метода"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Swagger/OpenAPI документация",
+      "description": "Полная документация API с описаниями",
+      "item": [
+        {
+          "name": "Swagger UI - Главная страница",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/swagger-ui.html",
+              "host": ["{{baseUrl}}"],
+              "path": ["swagger-ui.html"]
+            },
+            "description": "Открой в браузере для просмотра всей документации"
+          },
+          "response": []
+        },
+        {
+          "name": "OpenAPI JSON",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/v3/api-docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["v3", "api-docs"]
+            },
+            "description": "JSON схема всего API для интеграции"
+          },
+          "response": []
+        },
+        {
+          "name": "Тестирование в Swagger",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            },
+            "description": "Используй Swagger UI для тестирования запросов с примерами"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Дополнительная демонстрация - Кеширование",
+      "description": "Проверка работы кеша с CACHE_HIT/CACHE_MISS",
+      "item": [
+        {
+          "name": "Первый запрос - CACHE_MISS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/filter?department=Software%20Engineering&category=Development&page=0&size=2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "filter"],
+              "query": [
+                { "key": "department", "value": "Software Engineering" },
+                { "key": "category", "value": "Development" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" }
+              ]
+            },
+            "description": "В логах увидишь: CACHE_MISS entity=Course"
+          },
+          "response": []
+        },
+        {
+          "name": "Второй запрос - CACHE_HIT",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/filter?department=Software%20Engineering&category=Development&page=0&size=2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "filter"],
+              "query": [
+                { "key": "department", "value": "Software Engineering" },
+                { "key": "category", "value": "Development" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "2" }
+              ]
+            },
+            "description": "В логах увидишь: CACHE_HIT entity=Course"
+          },
+          "response": []
+        },
+        {
+          "name": "Инвалидация кеша",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Новый курс\",\n  \"description\": \"Описание\",\n  \"price\": 199.99,\n  \"durationWeeks\": 8,\n  \"teacher\": { \"id\": {{teacherId}} },\n  \"category\": { \"id\": {{categoryId}} }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            },
+            "description": "После создания кеш инвалидирован: CACHE_INVALIDATE entity=Course"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Базовые CRUD операции",
+      "description": "Стандартные операции для полной демонстрации",
+      "item": [
+        {
+          "name": "Get all courses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          }
+        },
+        {
+          "name": "Get course by id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create course",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"React.js Complete\",\n  \"description\": \"From basics to advanced\",\n  \"price\": 249.99,\n  \"durationWeeks\": 10,\n  \"teacher\": { \"id\": {{teacherId}} },\n  \"category\": { \"id\": {{categoryId}} }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
+          }
+        },
+        {
+          "name": "Update course (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"React.js Updated\",\n  \"description\": \"Updated description\",\n  \"price\": 299.99,\n  \"durationWeeks\": 12,\n  \"teacher\": { \"id\": {{teacherId}} },\n  \"category\": { \"id\": {{categoryId}} }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete course",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses", "{{courseId}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

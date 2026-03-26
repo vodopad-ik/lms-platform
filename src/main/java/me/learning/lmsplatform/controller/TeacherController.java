@@ -1,5 +1,8 @@
 package me.learning.lmsplatform.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.learning.lmsplatform.cache.QueryMode;
@@ -22,21 +25,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/teachers")
 @RequiredArgsConstructor
+@Tag(name = "Teachers", description = "Teacher management API")
 public class TeacherController {
 
     private final TeacherService teacherService;
 
     @GetMapping
+    @Operation(summary = "Get all teachers", operationId = "teacherGetAll")
     public ResponseEntity<List<TeacherDto>> getAllTeachers() {
         return ResponseEntity.ok(teacherService.getAllTeachers());
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get teacher by id", operationId = "teacherGetById")
     public ResponseEntity<TeacherDto> getTeacher(@PathVariable Long id) {
         return ResponseEntity.ok(teacherService.getTeacherById(id));
     }
 
     @GetMapping("/filter")
+    @Operation(summary = "Filter teachers (JPQL)", operationId = "teacherFilterJpql")
     public ResponseEntity<Page<TeacherDto>> filterTeachers(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String department,
@@ -47,6 +54,7 @@ public class TeacherController {
     }
 
     @GetMapping("/filter/native")
+    @Operation(summary = "Filter teachers (native query)", operationId = "teacherFilterNative")
     public ResponseEntity<Page<TeacherDto>> filterTeachersNative(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String department,
@@ -57,19 +65,22 @@ public class TeacherController {
     }
 
     @PostMapping
-    public ResponseEntity<TeacherDto> createTeacher(@RequestBody TeacherDto teacherDto) {
+    @Operation(summary = "Create teacher", operationId = "teacherCreate")
+    public ResponseEntity<TeacherDto> createTeacher(@Valid @RequestBody TeacherDto teacherDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(teacherService.createTeacher(teacherDto));
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update teacher", operationId = "teacherUpdate")
     public ResponseEntity<TeacherDto> updateTeacher(
             @PathVariable Long id,
-            @RequestBody TeacherDto teacherDto) {
+            @Valid @RequestBody TeacherDto teacherDto) {
         return ResponseEntity.ok(teacherService.updateTeacher(id, teacherDto));
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete teacher", operationId = "teacherDelete")
     public ResponseEntity<Void> deleteTeacher(@PathVariable Long id) {
         teacherService.deleteTeacher(id);
         return ResponseEntity.noContent().build();
