@@ -21,6 +21,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  private static final String VALIDATION_FAILED = "Validation failed";
+
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ApiErrorResponse> handleNotFound(
       ResourceNotFoundException exception,
@@ -38,13 +40,13 @@ public class GlobalExceptionHandler {
         .collect(Collectors.toMap(
             FieldError::getField,
             fieldError -> fieldError.getDefaultMessage() == null
-                ? "Validation failed"
+                ? VALIDATION_FAILED
                 : fieldError.getDefaultMessage(),
             (first, second) -> first,
             LinkedHashMap::new));
     return buildResponse(
         HttpStatus.BAD_REQUEST,
-        "Validation failed",
+        VALIDATION_FAILED,
         request.getRequestURI(),
         validationErrors);
   }
@@ -58,13 +60,13 @@ public class GlobalExceptionHandler {
         .collect(Collectors.toMap(
             violation -> violation.getPropertyPath().toString(),
             violation -> violation.getMessage() == null
-                ? "Validation failed"
+                ? VALIDATION_FAILED
                 : violation.getMessage(),
             (first, second) -> first,
             LinkedHashMap::new));
     return buildResponse(
         HttpStatus.BAD_REQUEST,
-        "Validation failed",
+        VALIDATION_FAILED,
         request.getRequestURI(),
         validationErrors);
   }
