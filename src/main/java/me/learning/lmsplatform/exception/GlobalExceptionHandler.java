@@ -21,6 +21,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  private static final String VALIDATION_FAILED_MESSAGE = "Validation failed";
+
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ApiErrorResponse> handleNotFound(
       ResourceNotFoundException exception,
@@ -29,7 +31,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(
+  public ResponseEntity<ApiErrorResponse> handleValidationErrors(
       MethodArgumentNotValidException exception,
       HttpServletRequest request) {
     Map<String, String> validationErrors = exception.getBindingResult()
@@ -37,14 +39,14 @@ public class GlobalExceptionHandler {
         .stream()
         .collect(Collectors.toMap(
             FieldError::getField,
-            fieldError -> fieldError.getDefaultMessage() == null
-                ? "Validation failed"
-                : fieldError.getDefaultMessage(),
+            error -> error.getDefaultMessage() == null
+                ? VALIDATION_FAILED_MESSAGE
+                : error.getDefaultMessage(),
             (first, second) -> first,
             LinkedHashMap::new));
     return buildResponse(
         HttpStatus.BAD_REQUEST,
-        "Validation failed",
+        VALIDATION_FAILED_MESSAGE,
         request.getRequestURI(),
         validationErrors);
   }
@@ -58,13 +60,13 @@ public class GlobalExceptionHandler {
         .collect(Collectors.toMap(
             violation -> violation.getPropertyPath().toString(),
             violation -> violation.getMessage() == null
-                ? "Validation failed"
+                ? VALIDATION_FAILED_MESSAGE
                 : violation.getMessage(),
             (first, second) -> first,
             LinkedHashMap::new));
     return buildResponse(
         HttpStatus.BAD_REQUEST,
-        "Validation failed",
+        VALIDATION_FAILED_MESSAGE,
         request.getRequestURI(),
         validationErrors);
   }
