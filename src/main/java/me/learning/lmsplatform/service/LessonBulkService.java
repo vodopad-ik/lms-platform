@@ -27,15 +27,15 @@ public class LessonBulkService {
   private final CacheInvalidationService cacheInvalidationService;
 
   public List<LessonDto> createBulkWithoutTransaction(List<LessonDto> lessons) {
-    List<LessonDto> created = lessons.stream()
-        .map(this::createOne)
-        .toList();
-    cacheInvalidationService.onLessonChanged();
-    return created;
+    return doCreateBulk(lessons);
   }
 
   @Transactional
   public List<LessonDto> createBulkWithTransaction(List<LessonDto> lessons) {
+    return doCreateBulk(lessons);
+  }
+
+  private List<LessonDto> doCreateBulk(List<LessonDto> lessons) {
     List<LessonDto> created = lessons.stream()
         .map(this::createOne)
         .toList();
