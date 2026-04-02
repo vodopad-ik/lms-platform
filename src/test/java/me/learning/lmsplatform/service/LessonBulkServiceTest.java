@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -54,14 +53,14 @@ class LessonBulkServiceTest {
         .build();
 
     Lesson lessonEntity = new Lesson();
-    when(lessonMapper.mapToEntity(eq(dto))).thenReturn(lessonEntity);
+    when(lessonMapper.mapToEntity(dto)).thenReturn(lessonEntity);
 
     Lesson saved = new Lesson();
     saved.setId(1L);
-    when(lessonRepository.save(eq(lessonEntity))).thenReturn(saved);
+    when(lessonRepository.save(lessonEntity)).thenReturn(saved);
 
     LessonDto mapped = LessonDto.builder().id(1L).title("Lesson 1").build();
-    when(lessonMapper.mapToDto(eq(saved))).thenReturn(mapped);
+    when(lessonMapper.mapToDto(saved)).thenReturn(mapped);
 
     List<LessonDto> result = lessonBulkService.createBulkWithoutTransaction(List.of(dto));
 
@@ -81,18 +80,18 @@ class LessonBulkServiceTest {
         .build();
 
     Lesson lessonEntity = new Lesson();
-    when(lessonMapper.mapToEntity(eq(dto))).thenReturn(lessonEntity);
+    when(lessonMapper.mapToEntity(dto)).thenReturn(lessonEntity);
 
     Course course = new Course();
     course.setId(5L);
-    when(courseRepository.findById(eq(5L))).thenReturn(Optional.of(course));
+    when(courseRepository.findById(5L)).thenReturn(Optional.of(course));
 
     Lesson saved = new Lesson();
     saved.setId(10L);
-    when(lessonRepository.save(eq(lessonEntity))).thenReturn(saved);
+    when(lessonRepository.save(lessonEntity)).thenReturn(saved);
 
     LessonDto mapped = LessonDto.builder().id(10L).title("Lesson 1").build();
-    when(lessonMapper.mapToDto(eq(saved))).thenReturn(mapped);
+    when(lessonMapper.mapToDto(saved)).thenReturn(mapped);
 
     List<LessonDto> result = lessonBulkService.createBulkWithTransaction(List.of(dto));
 
@@ -100,7 +99,7 @@ class LessonBulkServiceTest {
     assertEquals(10L, result.get(0).getId());
     assertNotNull(lessonEntity.getCourse());
     assertEquals(5L, lessonEntity.getCourse().getId());
-    verify(courseRepository, times(1)).findById(eq(5L));
+    verify(courseRepository, times(1)).findById(5L);
     verify(cacheInvalidationService, times(1)).onLessonChanged();
   }
 
@@ -114,8 +113,8 @@ class LessonBulkServiceTest {
         .build();
 
     Lesson lessonEntity = new Lesson();
-    when(lessonMapper.mapToEntity(eq(dto))).thenReturn(lessonEntity);
-    when(courseRepository.findById(eq(999L))).thenReturn(Optional.empty());
+    when(lessonMapper.mapToEntity(dto)).thenReturn(lessonEntity);
+    when(courseRepository.findById(999L)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class,
         () -> lessonBulkService.createBulkWithoutTransaction(List.of(dto)));
@@ -139,14 +138,14 @@ class LessonBulkServiceTest {
         .build();
 
     Lesson okEntity = new Lesson();
-    when(lessonMapper.mapToEntity(eq(ok))).thenReturn(okEntity);
+    when(lessonMapper.mapToEntity(ok)).thenReturn(okEntity);
 
     Lesson saved = new Lesson();
     saved.setId(1L);
-    when(lessonRepository.save(eq(okEntity))).thenReturn(saved);
+    when(lessonRepository.save(okEntity)).thenReturn(saved);
 
     LessonDto mapped = LessonDto.builder().id(1L).title("Lesson 1").build();
-    when(lessonMapper.mapToDto(eq(saved))).thenReturn(mapped);
+    when(lessonMapper.mapToDto(saved)).thenReturn(mapped);
 
     assertThrows(SimulatedFailureException.class,
         () -> lessonBulkService.createBulkWithoutTransaction(List.of(ok, fail)));
