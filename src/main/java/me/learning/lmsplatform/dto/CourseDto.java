@@ -2,6 +2,7 @@ package me.learning.lmsplatform.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -34,6 +35,7 @@ public class CourseDto {
   
   @NotNull(message = "Duration weeks cannot be null")
   @Positive(message = "Duration weeks must be positive")
+  @Max(value = 52, message = "Duration weeks cannot exceed 52 weeks (approximately 1 year)")
   @Schema(description = "Course duration in weeks", example = "8")
   private Integer durationWeeks;
   

@@ -2,6 +2,7 @@ package me.learning.lmsplatform.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,7 @@ public class LessonDto {
     private String content;
 
     @Positive(message = "Lesson duration must be positive")
+    @Max(value = 525600, message = "Lesson duration cannot exceed 525600 minutes (364 weeks)")
     @Schema(description = "Lesson duration in minutes", example = "45")
     private Integer durationMinutes;
 

@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.learning.lmsplatform.cache.QueryMode;
 import me.learning.lmsplatform.dto.LessonDto;
+import me.learning.lmsplatform.service.LessonBulkService;
 import me.learning.lmsplatform.service.LessonService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LessonController {
 
     private final LessonService lessonService;
+    private final LessonBulkService lessonBulkService;
 
     @GetMapping
     @Operation(summary = "Get all lessons", operationId = "lessonGetAll")
@@ -69,6 +71,24 @@ public class LessonController {
     public ResponseEntity<LessonDto> createLesson(@Valid @RequestBody LessonDto lessonDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(lessonService.createLesson(lessonDto));
+    }
+
+    @PostMapping("/bulk/no-transaction")
+    @Operation(summary = "Bulk create lessons without @Transactional",
+        operationId = "lessonBulkCreateNoTransaction")
+    public ResponseEntity<List<LessonDto>> bulkCreateNoTransaction(
+        @Valid @RequestBody List<LessonDto> lessons) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(lessonBulkService.createBulkWithoutTransaction(lessons));
+    }
+
+    @PostMapping("/bulk/with-transaction")
+    @Operation(summary = "Bulk create lessons with @Transactional",
+        operationId = "lessonBulkCreateWithTransaction")
+    public ResponseEntity<List<LessonDto>> bulkCreateWithTransaction(
+        @Valid @RequestBody List<LessonDto> lessons) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(lessonBulkService.createBulkWithTransaction(lessons));
     }
 
     @PutMapping("/{id}")

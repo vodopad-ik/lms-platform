@@ -404,6 +404,48 @@
       ]
     },
     {
+      "name": "Bulk Lessons - транзакции (@Transactional)",
+      "description": "Два bulk endpoint: без транзакции сохранится часть данных; с транзакцией произойдет rollback",
+      "item": [
+        {
+          "name": "Bulk create lessons WITHOUT @Transactional (ожидается частичное сохранение)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"title\": \"Lesson A\",\n    \"content\": \"ok\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"FAIL\",\n    \"content\": \"boom\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"Lesson C\",\n    \"content\": \"never reached\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/bulk/no-transaction",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons", "bulk", "no-transaction"]
+            },
+            "description": "Второй элемент title=FAIL вызывает ошибку. Проверь БД: первый урок должен сохраниться."
+          },
+          "response": []
+        },
+        {
+          "name": "Bulk create lessons WITH @Transactional (ожидается rollback)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"title\": \"Lesson A\",\n    \"content\": \"ok\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"FAIL\",\n    \"content\": \"boom\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"Lesson C\",\n    \"content\": \"never reached\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/bulk/with-transaction",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons", "bulk", "with-transaction"]
+            },
+            "description": "Второй элемент title=FAIL вызывает ошибку. Проверь БД: НИ ОДИН урок не должен сохраниться (rollback)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Базовые CRUD операции",
       "description": "Стандартные операции для полной демонстрации",
       "item": [
