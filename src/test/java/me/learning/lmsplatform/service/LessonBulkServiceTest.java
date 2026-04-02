@@ -117,7 +117,9 @@ class LessonBulkServiceTest {
     when(courseRepository.findById(999L)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class,
-        () -> lessonBulkService.createBulkWithoutTransaction(List.of(dto)));
+        () -> {
+          lessonBulkService.createBulkWithoutTransaction(List.of(dto));
+        });
 
     verify(lessonRepository, never()).save(any());
     verify(cacheInvalidationService, never()).onLessonChanged();
@@ -148,7 +150,9 @@ class LessonBulkServiceTest {
     when(lessonMapper.mapToDto(saved)).thenReturn(mapped);
 
     assertThrows(SimulatedFailureException.class,
-        () -> lessonBulkService.createBulkWithoutTransaction(List.of(ok, fail)));
+        () -> {
+          lessonBulkService.createBulkWithoutTransaction(List.of(ok, fail));
+        });
 
     verify(lessonRepository, times(1)).save(any(Lesson.class));
     verify(cacheInvalidationService, never()).onLessonChanged();
