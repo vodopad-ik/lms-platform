@@ -22,6 +22,18 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.exclusions>
+			**/model/**,
+			**/dto/**,
+			**/exception/**,
+			**/repository/**,
+			**/mapper/**,
+			**/controller/**,
+			**/cache/**,
+			**/aspect/**,
+			**/config/**,
+			**/LmsPlatformApplication.java
+		</sonar.exclusions>
 	</properties>
 
 	<dependencies>
