@@ -140,6 +140,20 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/model/**</exclude>
+								<exclude>**/dto/**</exclude>
+								<exclude>**/exception/**</exclude>
+								<exclude>**/repository/**</exclude>
+								<exclude>**/mapper/**</exclude>
+								<exclude>**/controller/**</exclude>
+								<exclude>**/cache/**</exclude>
+								<exclude>**/aspect/**</exclude>
+								<exclude>**/config/**</exclude>
+								<exclude>**/*LmsPlatformApplication.java</exclude>
+							</excludes>
+						</configuration>
 					</execution>
 					<execution>
 						<id>check</id>
