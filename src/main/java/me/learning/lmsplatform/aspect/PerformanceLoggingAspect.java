@@ -15,23 +15,26 @@ public class PerformanceLoggingAspect {
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         String methodName = joinPoint.getSignature().toShortString();
+        Throwable thrownException = null;
         
         try {
-            Object result = joinPoint.proceed();
-            long executionTime = System.currentTimeMillis() - startTime;
-            
-            log.info("PERFORMANCE method={} executionTime={}ms", methodName, executionTime);
-            
-            if (executionTime > 1000) {
-                log.warn("SLOW_EXECUTION method={} executionTime={}ms", methodName, executionTime);
-            }
-            
-            return result;
-        } catch (Exception e) {
-            long executionTime = System.currentTimeMillis() - startTime;
-            log.error("PERFORMANCE_ERROR method={} executionTime={}ms error={}", 
-                     methodName, executionTime, e.getMessage());
+            return joinPoint.proceed();
+        } catch (Throwable e) {
+            thrownException = e;
             throw e;
+        } finally {
+            long executionTime = System.currentTimeMillis() - startTime;
+            
+            if (thrownException != null) {
+                log.error("PERFORMANCE method={} executionTime={}ms FAILED error={}", 
+                         methodName, executionTime, thrownException.getMessage());
+            } else {
+                log.info("PERFORMANCE method={} executionTime={}ms", methodName, executionTime);
+                
+                if (executionTime > 1000) {
+                    log.warn("SLOW_EXECUTION method={} executionTime={}ms", methodName, executionTime);
+                }
+            }
         }
     }
 }
