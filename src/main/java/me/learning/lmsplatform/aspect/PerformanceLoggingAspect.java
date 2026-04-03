@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PerformanceLoggingAspect {
 
-    @Around("execution(* me.learning.lmsplatform.service.*.*(..))")
+    @Around("execution(* me.learning.lmsplatform.service.*.*(..)) || execution(* me.learning.lmsplatform.controller.*.*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         String methodName = joinPoint.getSignature().toShortString();
