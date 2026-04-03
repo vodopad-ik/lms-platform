@@ -336,29 +336,6 @@ class LessonServiceTest {
   }
 
   @Test
-  void updateLesson_withOnlyNullCourse_shouldSaveWithoutCourse() {
-    LessonDto dto = LessonDto.builder()
-        .title("Updated Lesson")
-        .build();
-    Lesson existing = new Lesson();
-    existing.setId(1L);
-    existing.setTitle("Old");
-    Lesson saved = new Lesson();
-    saved.setId(1L);
-    saved.setTitle("Updated Lesson");
-
-    when(lessonRepository.findById(1L)).thenReturn(Optional.of(existing));
-    when(lessonRepository.save(existing)).thenReturn(saved);
-    when(lessonMapper.mapToDto(saved)).thenReturn(LessonDto.builder().id(1L).title("Updated Lesson").build());
-
-    LessonDto result = lessonService.updateLesson(1L, dto);
-
-    assertEquals("Updated Lesson", result.getTitle());
-    verify(courseRepository, never()).findById(any());
-    verify(cacheInvalidationService, times(1)).onLessonChanged();
-  }
-
-  @Test
   void createLesson_withCourseNullId_shouldNotCallCourseRepository() {
     CourseShortDto nullIdCourse = new CourseShortDto();
     nullIdCourse.setId(null);

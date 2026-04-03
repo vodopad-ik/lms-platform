@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PerformanceLoggingAspect {
 
-    @Around("execution(* me.learning.lmsplatform.service.*.*(..)) || execution(* me.learning.lmsplatform.controller.*.*(..))")
+    @Around("execution(* me.learning.lmsplatform.service.*.*(..)) || "
+            + "execution(* me.learning.lmsplatform.controller.*.*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         String methodName = joinPoint.getSignature().toShortString();
@@ -26,13 +27,14 @@ public class PerformanceLoggingAspect {
             long executionTime = System.currentTimeMillis() - startTime;
             
             if (thrownException != null) {
-                log.error("PERFORMANCE method={} executionTime={}ms FAILED error={}", 
+                log.error("PERFORMANCE method={} executionTime={}ms FAILED error={}",
                          methodName, executionTime, thrownException.getMessage());
             } else {
                 log.info("PERFORMANCE method={} executionTime={}ms", methodName, executionTime);
                 
                 if (executionTime > 1000) {
-                    log.warn("SLOW_EXECUTION method={} executionTime={}ms", methodName, executionTime);
+                    log.warn("SLOW_EXECUTION method={} executionTime={}ms",
+                            methodName, executionTime);
                 }
             }
         }

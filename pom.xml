@@ -22,18 +22,19 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-		<sonar.exclusions>
-			**/model/**,
-			**/dto/**,
-			**/exception/**,
-			**/repository/**,
-			**/mapper/**,
-			**/controller/**,
-			**/cache/**,
-			**/aspect/**,
+		<sonar.coverage.exclusions>
+            **/model/**,
+            **/dto/**,
+            **/exception/**,
+            **/repository/**,
+            **/mapper/**,
+            **/controller/**,
+            **/cache/**,
+            **/aspect/**,
 			**/config/**,
-			**/LmsPlatformApplication.java
-		</sonar.exclusions>
+            **/*LmsPlatformApplication.java
+        </sonar.coverage.exclusions>
+
 	</properties>
 
 	<dependencies>
@@ -152,20 +153,6 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<configuration>
-							<excludes>
-								<exclude>**/model/**</exclude>
-								<exclude>**/dto/**</exclude>
-								<exclude>**/exception/**</exclude>
-								<exclude>**/repository/**</exclude>
-								<exclude>**/mapper/**</exclude>
-								<exclude>**/controller/**</exclude>
-								<exclude>**/cache/**</exclude>
-								<exclude>**/aspect/**</exclude>
-								<exclude>**/config/**</exclude>
-								<exclude>**/*LmsPlatformApplication.java</exclude>
-							</excludes>
-						</configuration>
 					</execution>
 					<execution>
 						<id>check</id>

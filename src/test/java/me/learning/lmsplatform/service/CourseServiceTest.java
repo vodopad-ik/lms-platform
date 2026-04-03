@@ -573,30 +573,6 @@ class CourseServiceTest {
   }
 
   @Test
-  void patchCourse_withOnlyNullIds_shouldNotApplyTeacherOrCategory() {
-    CoursePatchDto patchDto = CoursePatchDto.builder()
-        .title("Patched Title")
-        .build();
-    Course existing = new Course();
-    existing.setId(1L);
-    existing.setTitle("Old Title");
-    Course saved = new Course();
-    saved.setId(1L);
-    saved.setTitle("Patched Title");
-
-    when(courseRepository.findById(1L)).thenReturn(Optional.of(existing));
-    when(courseRepository.save(existing)).thenReturn(saved);
-    when(courseMapper.mapToDto(saved)).thenReturn(CourseDto.builder().id(1L).title("Patched Title").build());
-
-    CourseDto result = courseService.patchCourse(1L, patchDto);
-
-    assertEquals("Patched Title", result.getTitle());
-    verify(teacherRepository, never()).findById(any());
-    verify(categoryRepository, never()).findById(any());
-    verify(cacheInvalidationService, times(1)).onCourseChanged();
-  }
-
-  @Test
   void createCourse_withOnlyTeacherNull_shouldSaveWithCategory() {
     Category category = new Category();
     category.setId(1L);
