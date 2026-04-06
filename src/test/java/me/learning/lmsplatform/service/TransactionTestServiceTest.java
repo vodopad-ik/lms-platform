@@ -34,7 +34,6 @@ class TransactionTestServiceTest {
     try {
       transactionTestService.saveMultipleWithoutTransaction();
     } catch (SimulatedFailureException e) {
-      // Expected
     }
 
     verify(categoryRepository, times(1)).save(any(Category.class));
@@ -51,7 +50,6 @@ class TransactionTestServiceTest {
     try {
       transactionTestService.saveMultipleWithTransaction();
     } catch (SimulatedFailureException e) {
-      // Expected
     }
 
     verify(categoryRepository, times(1)).save(any(Category.class));
