@@ -12,6 +12,11 @@
       "description": "Базовый URL приложения"
     },
     {
+      "key": "taskId",
+      "value": "",
+      "description": "ID асинхронной задачи (заполняется после запуска /api/async-tasks)"
+    },
+    {
       "key": "courseId",
       "value": "5",
       "description": "ID курса для тестов"
@@ -336,6 +341,118 @@
               "path": ["api", "courses"]
             },
             "description": "Используй Swagger UI для тестирования запросов с примерами"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Async + Concurrency (Race Condition)",
+      "description": "Демонстрация: 1) асинхронная бизнес-операция с taskId и статусом 2) потокобезопасные счетчики 3) race condition и его решение",
+      "item": [
+        {
+          "name": "Async - Start task (returns taskId)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/async-tasks?steps=10&delayMs=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "async-tasks"],
+              "query": [
+                { "key": "steps", "value": "10" },
+                { "key": "delayMs", "value": "100" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.taskId) {",
+                  "  pm.collectionVariables.set('taskId', json.taskId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Async - Get task status by taskId",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/async-tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "async-tasks", "{{taskId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Counter - Increment UNSAFE (not thread-safe)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/concurrency/counter/increment?type=UNSAFE&times=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "concurrency", "counter", "increment"],
+              "query": [
+                { "key": "type", "value": "UNSAFE" },
+                { "key": "times", "value": "1" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Counter - Increment SYNCHRONIZED (thread-safe)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/concurrency/counter/increment?type=SYNCHRONIZED&times=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "concurrency", "counter", "increment"],
+              "query": [
+                { "key": "type", "value": "SYNCHRONIZED" },
+                { "key": "times", "value": "1" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Counter - Increment ATOMIC (thread-safe)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/concurrency/counter/increment?type=ATOMIC&times=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "concurrency", "counter", "increment"],
+              "query": [
+                { "key": "type", "value": "ATOMIC" },
+                { "key": "times", "value": "1" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Race demo - 50 threads x 1000 increments",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/concurrency/race-demo?threads=50&incrementsPerThread=1000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "concurrency", "race-demo"],
+              "query": [
+                { "key": "threads", "value": "50" },
+                { "key": "incrementsPerThread", "value": "1000" }
+              ]
+            }
           },
           "response": []
         }

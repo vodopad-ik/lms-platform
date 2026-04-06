@@ -1,5 +1,6 @@
 package me.learning.lmsplatform.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,10 +32,9 @@ class TransactionTestServiceTest {
       return cat;
     });
 
-    try {
+    assertThrows(SimulatedFailureException.class, () -> {
       transactionTestService.saveMultipleWithoutTransaction();
-    } catch (SimulatedFailureException e) {
-    }
+    });
 
     verify(categoryRepository, times(1)).save(any(Category.class));
   }
@@ -47,10 +47,9 @@ class TransactionTestServiceTest {
       return cat;
     });
 
-    try {
+    assertThrows(SimulatedFailureException.class, () -> {
       transactionTestService.saveMultipleWithTransaction();
-    } catch (SimulatedFailureException e) {
-    }
+    });
 
     verify(categoryRepository, times(1)).save(any(Category.class));
   }

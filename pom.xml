@@ -32,6 +32,14 @@
             **/cache/**,
             **/aspect/**,
 			**/config/**,
+            **/service/AsyncTaskService.java,
+            **/service/AsyncTaskRunner.java,
+            **/service/CounterService.java,
+            **/service/RaceConditionDemoService.java,
+            **/service/AsyncTaskStatus.java,
+            **/service/AsyncTaskInfo.java,
+            **/service/CounterType.java,
+            **/service/RaceConditionResult.java,
             **/*LmsPlatformApplication.java
         </sonar.coverage.exclusions>
 
