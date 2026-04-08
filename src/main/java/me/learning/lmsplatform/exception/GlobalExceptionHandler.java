@@ -75,8 +75,7 @@ public class GlobalExceptionHandler {
       IllegalArgumentException.class,
       MethodArgumentTypeMismatchException.class,
       HttpMessageNotReadableException.class,
-      DataAccessException.class,
-      SimulatedFailureException.class
+      DataAccessException.class
   })
   public ResponseEntity<ApiErrorResponse> handleBadRequest(
       Exception exception,

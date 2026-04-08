@@ -531,14 +531,14 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "[\n  {\n    \"title\": \"Lesson A\",\n    \"content\": \"ok\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"FAIL\",\n    \"content\": \"boom\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"Lesson C\",\n    \"content\": \"never reached\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  }\n]"
+              "raw": "[\n  {\n    \"title\": \"Lesson A\",\n    \"content\": \"ok\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"FAIL\",\n    \"content\": \"boom\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": 999999 }\n  }\n]"
             },
             "url": {
               "raw": "{{baseUrl}}/api/lessons/bulk/no-transaction",
               "host": ["{{baseUrl}}"],
               "path": ["api", "lessons", "bulk", "no-transaction"]
             },
-            "description": "Второй элемент title=FAIL вызывает ошибку. Проверь БД: первый урок должен сохраниться."
+            "description": "Второй объект имеет несуществующий courseId (999999), что вызовет 404. Без транзакции Lesson A сохранится в БД."
           },
           "response": []
         },
@@ -549,14 +549,14 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "[\n  {\n    \"title\": \"Lesson A\",\n    \"content\": \"ok\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"FAIL\",\n    \"content\": \"boom\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"Lesson C\",\n    \"content\": \"never reached\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  }\n]"
+              "raw": "[\n  {\n    \"title\": \"Lesson A\",\n    \"content\": \"ok\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": {{courseId}} }\n  },\n  {\n    \"title\": \"FAIL\",\n    \"content\": \"boom\",\n    \"durationMinutes\": 10,\n    \"course\": { \"id\": 999999 }\n  }\n]"
             },
             "url": {
               "raw": "{{baseUrl}}/api/lessons/bulk/with-transaction",
               "host": ["{{baseUrl}}"],
               "path": ["api", "lessons", "bulk", "with-transaction"]
             },
-            "description": "Второй элемент title=FAIL вызывает ошибку. Проверь БД: НИ ОДИН урок не должен сохраниться (rollback)."
+            "description": "Второй объект имеет несуществующий courseId (999999), что вызовет 404. С транзакцией Lesson A НЕ сохранится (rollback)."
           },
           "response": []
         }

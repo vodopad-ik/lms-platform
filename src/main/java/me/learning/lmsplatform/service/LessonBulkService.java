@@ -36,18 +36,14 @@ public class LessonBulkService {
   }
 
   private List<LessonDto> doCreateBulk(List<LessonDto> lessons) {
-    List<LessonDto> created = lessons.stream()
-        .map(this::createOne)
-        .toList();
+    for (LessonDto lessonDto : lessons) {
+      createOne(lessonDto);
+    }
     cacheInvalidationService.onLessonChanged();
-    return created;
+    return lessons;
   }
 
   private LessonDto createOne(LessonDto lessonDto) {
-    if ("FAIL".equalsIgnoreCase(lessonDto.getTitle())) {
-      throw new SimulatedFailureException("Simulated failure for bulk operation");
-    }
-
     Lesson lesson = lessonMapper.mapToEntity(lessonDto);
 
     Optional<Long> courseId = Optional.ofNullable(lessonDto.getCourse())
