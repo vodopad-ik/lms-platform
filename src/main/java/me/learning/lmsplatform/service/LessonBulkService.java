@@ -1,12 +1,12 @@
 package me.learning.lmsplatform.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import me.learning.lmsplatform.dto.CourseShortDto;
 import me.learning.lmsplatform.dto.LessonDto;
 import me.learning.lmsplatform.exception.ResourceNotFoundException;
-import me.learning.lmsplatform.exception.SimulatedFailureException;
 import me.learning.lmsplatform.mapper.LessonMapper;
 import me.learning.lmsplatform.model.Course;
 import me.learning.lmsplatform.model.Lesson;
@@ -36,11 +36,12 @@ public class LessonBulkService {
   }
 
   private List<LessonDto> doCreateBulk(List<LessonDto> lessons) {
+    List<LessonDto> created = new ArrayList<>();
     for (LessonDto lessonDto : lessons) {
-      createOne(lessonDto);
+      created.add(createOne(lessonDto));
     }
     cacheInvalidationService.onLessonChanged();
-    return lessons;
+    return created;
   }
 
   private LessonDto createOne(LessonDto lessonDto) {

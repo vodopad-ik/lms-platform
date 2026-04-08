@@ -14,7 +14,6 @@ import java.util.Optional;
 import me.learning.lmsplatform.dto.CourseShortDto;
 import me.learning.lmsplatform.dto.LessonDto;
 import me.learning.lmsplatform.exception.ResourceNotFoundException;
-import me.learning.lmsplatform.exception.SimulatedFailureException;
 import me.learning.lmsplatform.mapper.LessonMapper;
 import me.learning.lmsplatform.model.Course;
 import me.learning.lmsplatform.model.Lesson;
@@ -126,21 +125,24 @@ class LessonBulkServiceTest {
   }
 
   @Test
-  void createBulkWithoutTransaction_whenFailTitle_throwsAndStopsProcessing() {
+  void createBulkWithoutTransaction_whenSecondLessonHasInvalidCourseId_throwsNotFoundAndStopsProcessing() {
     LessonDto ok = LessonDto.builder()
         .title("Lesson 1")
         .content("Content")
         .durationMinutes(10)
+        .course(CourseShortDto.builder().id(5L).build())
         .build();
 
     LessonDto fail = LessonDto.builder()
         .title("FAIL")
         .content("Content")
         .durationMinutes(10)
+        .course(CourseShortDto.builder().id(999999L).build())
         .build();
 
     Lesson okEntity = new Lesson();
     when(lessonMapper.mapToEntity(ok)).thenReturn(okEntity);
+    when(courseRepository.findById(5L)).thenReturn(Optional.of(new Course()));
 
     Lesson saved = new Lesson();
     saved.setId(1L);
@@ -149,9 +151,13 @@ class LessonBulkServiceTest {
     LessonDto mapped = LessonDto.builder().id(1L).title("Lesson 1").build();
     when(lessonMapper.mapToDto(saved)).thenReturn(mapped);
 
+    Lesson failEntity = new Lesson();
+    when(lessonMapper.mapToEntity(fail)).thenReturn(failEntity);
+    when(courseRepository.findById(999999L)).thenReturn(Optional.empty());
+
     List<LessonDto> lessons = List.of(ok, fail);
 
-    assertThrows(SimulatedFailureException.class,
+    assertThrows(ResourceNotFoundException.class,
         () -> lessonBulkService.createBulkWithoutTransaction(lessons));
 
     verify(lessonRepository, times(1)).save(any(Lesson.class));
