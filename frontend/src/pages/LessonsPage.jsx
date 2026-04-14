@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { lessonApi } from '../api/lessonApi';
-import { Plus, Edit, Trash2, Clock, Video, BookOpen } from 'lucide-react';
+import { Plus, Edit, Trash2, Clock, Video, BookOpen, ArrowLeft } from 'lucide-react';
 
 export default function LessonsPage() {
   const [lessons, setLessons] = useState([]);
@@ -9,10 +10,17 @@ export default function LessonsPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingLesson, setEditingLesson] = useState(null);
   const [filter, setFilter] = useState({ courseId: '', courseTitle: '', title: '' });
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    fetchLessons();
-  }, []);
+    const courseId = searchParams.get('courseId');
+    if (courseId) {
+      setFilter(f => ({ ...f, courseId }));
+      handleFilterWithCourseId(courseId);
+    } else {
+      fetchLessons();
+    }
+  }, [searchParams]);
 
   const fetchLessons = async () => {
     try {
@@ -21,6 +29,19 @@ export default function LessonsPage() {
       setLessons(response.data);
     } catch (err) {
       setError('Failed to fetch lessons');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterWithCourseId = async (courseId) => {
+    try {
+      setLoading(true);
+      const response = await lessonApi.filter({ courseId: parseInt(courseId) });
+      setLessons(response.data.content || response.data);
+    } catch (err) {
+      setError('Failed to filter lessons');
       console.error(err);
     } finally {
       setLoading(false);
@@ -82,10 +103,20 @@ export default function LessonsPage() {
   if (loading) return <div className="text-center py-8">Loading...</div>;
   if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
 
+  const courseId = searchParams.get('courseId');
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Lessons</h1>
+        <div className="flex items-center space-x-4">
+          {courseId && (
+            <Link to="/courses" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Courses</span>
+            </Link>
+          )}
+          <h1 className="text-3xl font-bold text-gray-800">Lessons</h1>
+        </div>
         <button
           onClick={() => { setEditingLesson(null); setShowModal(true); }}
           className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center space-x-2"
@@ -187,7 +218,9 @@ function LessonCard({ lesson, onEdit, onDelete }) {
         {lesson.course && (
           <div className="flex items-center space-x-2">
             <BookOpen className="w-4 h-4" />
-            <span>{lesson.course.title}</span>
+            <Link to={`/courses?courseId=${lesson.course.id}`} className="text-indigo-600 hover:text-indigo-800 hover:underline">
+              {lesson.course.title}
+            </Link>
           </div>
         )}
       </div>

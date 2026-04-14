@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { courseApi } from '../api/courseApi';
-import { Plus, Edit, Trash2, Users, BookOpen, DollarSign, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, Users, BookOpen, DollarSign, Clock, PlayCircle } from 'lucide-react';
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState([]);
@@ -191,15 +192,26 @@ function CourseCard({ course, onEdit, onDelete }) {
         {course.teacher && (
           <div className="flex items-center space-x-2">
             <Users className="w-4 h-4" />
-            <span>{course.teacher.name}</span>
+            <Link to={`/teachers?courseId=${course.id}`} className="text-indigo-600 hover:text-indigo-800 hover:underline">
+              {course.teacher.name}
+            </Link>
           </div>
         )}
         {course.category && (
           <div className="flex items-center space-x-2">
             <BookOpen className="w-4 h-4" />
-            <span>{course.category.name}</span>
+            <Link to={`/categories?courseId=${course.id}`} className="text-indigo-600 hover:text-indigo-800 hover:underline">
+              {course.category.name}
+            </Link>
           </div>
         )}
+        <Link 
+          to={`/lessons?courseId=${course.id}`} 
+          className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 hover:underline"
+        >
+          <PlayCircle className="w-4 h-4" />
+          <span>View Lessons</span>
+        </Link>
       </div>
     </div>
   );
