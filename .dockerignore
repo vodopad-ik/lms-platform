@@ -39,6 +39,3 @@ docs/
 
 # Logs
 *.log
-
-# Frontend (if not needed in backend container)
-frontend/
