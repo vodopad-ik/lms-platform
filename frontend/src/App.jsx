@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { BookOpen, Users, GraduationCap, FileText, Home } from 'lucide-react';
+import { BookOpen, Users, GraduationCap, FileText, Home, Tag } from 'lucide-react';
 import CoursesPage from './pages/CoursesPage';
 import StudentsPage from './pages/StudentsPage';
 import TeachersPage from './pages/TeachersPage';
 import LessonsPage from './pages/LessonsPage';
+import CategoriesPage from './pages/CategoriesPage';
 
 function App() {
   return (
@@ -37,6 +38,10 @@ function App() {
                   <FileText className="w-5 h-5" />
                   <span>Lessons</span>
                 </Link>
+                <Link to="/categories" className="flex items-center space-x-1 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+                  <Tag className="w-5 h-5" />
+                  <span>Categories</span>
+                </Link>
               </div>
             </div>
           </div>
@@ -49,6 +54,7 @@ function App() {
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/teachers" element={<TeachersPage />} />
             <Route path="/lessons" element={<LessonsPage />} />
+            <Route path="/categories" element={<CategoriesPage />} />
           </Routes>
         </main>
       </div>

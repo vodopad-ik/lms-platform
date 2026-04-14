@@ -1,12 +1,8 @@
 import axios from 'axios';
 
-// Hardcode Render URL for production, localhost for development
-const API_BASE_URL = window.location.hostname.includes('onrender.com')
-  ? '/api'
-  : 'http://localhost:8080/api';
-
+// Use relative path for both development (with proxy) and production (same domain)
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
