@@ -37,16 +37,16 @@ ON CONFLICT (id) DO NOTHING;
 
 -- Insert lessons
 INSERT INTO lessons (id, title, content, duration_minutes, video_url, course_id) VALUES 
-(1, 'Introduction to Java', 'Java basics and setup', 45, 'https://example.com/java-intro', 1),
-(2, 'Object-Oriented Programming', 'OOP concepts in Java', 60, 'https://example.com/java-oop', 1),
-(3, 'Java Collections', 'Lists, sets, and maps', 50, 'https://example.com/java-collections', 1),
-(4, 'React Basics', 'Components and props', 40, 'https://example.com/react-basics', 2),
-(5, 'State Management', 'Redux and Context API', 55, 'https://example.com/react-state', 2),
-(6, 'Design Principles', 'Color theory and typography', 35, 'https://example.com/design-principles', 3),
-(7, 'User Research', 'Interviews and surveys', 45, 'https://example.com/user-research', 3),
-(8, 'Business Models', 'Canvas and strategies', 50, 'https://example.com/business-models', 4),
-(9, 'Python Basics', 'Variables and data types', 40, 'https://example.com/python-basics', 5),
-(10, 'Machine Learning Intro', 'ML fundamentals', 60, 'https://example.com/ml-intro', 5)
+(1, 'Introduction to Java', 'Java basics and setup', 45, 'https://www.youtube.com/watch?v=Hl-zzrqQoSE', 1),
+(2, 'Object-Oriented Programming', 'OOP concepts in Java', 60, 'https://www.youtube.com/watch?v=pTB0EiLX38M', 1),
+(3, 'Java Collections', 'Lists, sets, and maps', 50, 'https://www.youtube.com/watch?v=57SNyQk_aJU', 1),
+(4, 'React Basics', 'Components and props', 40, 'https://www.youtube.com/watch?v=SqcY0GlETPk', 2),
+(5, 'State Management', 'Redux and Context API', 55, 'https://www.youtube.com/watch?v=CVClUw8-4rU', 2),
+(6, 'Design Principles', 'Color theory and typography', 35, 'https://www.youtube.com/watch?v=A51CRNEMvV0', 3),
+(7, 'User Research', 'Interviews and surveys', 45, 'https://www.youtube.com/watch?v=0LQXpRpT2Qk', 3),
+(8, 'Business Models', 'Canvas and strategies', 50, 'https://www.youtube.com/watch?v=5oU2dN4k8bM', 4),
+(9, 'Python Basics', 'Variables and data types', 40, 'https://www.youtube.com/watch?v=rfscVS0vtbw', 5),
+(10, 'Machine Learning Intro', 'ML fundamentals', 60, 'https://www.youtube.com/watch?v=ukzFI9rgwfU', 5)
 ON CONFLICT (id) DO NOTHING;
 
 -- Enroll students in courses
