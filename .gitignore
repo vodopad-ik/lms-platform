@@ -45,6 +45,11 @@ postgres_data/
 *.log
 logs/
 
+### JMeter ###
+jmeter-report/
+*.jtl
+statistics.json
+
 ### Test & Coverage ###
 .jacoco/
 test-results/
