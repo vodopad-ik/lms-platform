@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { studentApi } from '../api/studentApi';
 import { Plus, Edit, Trash2, Mail, Calendar, BookOpen } from 'lucide-react';
 
@@ -186,7 +187,11 @@ function StudentCard({ student, onEdit, onDelete }) {
               <span className="font-medium">Courses:</span>
               <ul className="list-disc list-inside">
                 {student.courses.map(course => (
-                  <li key={course.id}>{course.title}</li>
+                  <li key={course.id}>
+                    <Link to={`/courses?studentId=${student.id}`} className="text-indigo-600 hover:text-indigo-800 hover:underline">
+                      {course.title}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>

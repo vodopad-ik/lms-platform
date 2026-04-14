@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { categoryApi } from '../api/categoryApi';
-import { Plus, Edit, Trash2, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Tag, BookOpen } from 'lucide-react';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -115,6 +116,13 @@ function CategoryCard({ category, onEdit, onDelete }) {
           </button>
         </div>
       </div>
+      <Link 
+        to={`/courses?categoryId=${category.id}`} 
+        className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 hover:underline"
+      >
+        <BookOpen className="w-4 h-4" />
+        <span>View Courses</span>
+      </Link>
     </div>
   );
 }

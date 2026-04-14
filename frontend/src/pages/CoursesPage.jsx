@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { courseApi } from '../api/courseApi';
 import { Plus, Edit, Trash2, Users, BookOpen, DollarSign, Clock, PlayCircle } from 'lucide-react';
 
@@ -10,10 +10,24 @@ export default function CoursesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
   const [filter, setFilter] = useState({ department: '', category: '', minPrice: '', maxPrice: '' });
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    const categoryId = searchParams.get('categoryId');
+    const teacherId = searchParams.get('teacherId');
+    const studentId = searchParams.get('studentId');
+    
+    if (categoryId) {
+      setFilter(f => ({ ...f, category: '' }));
+      fetchCoursesByCategory();
+    } else if (teacherId) {
+      fetchCoursesByTeacher();
+    } else if (studentId) {
+      fetchCoursesByStudent();
+    } else {
+      fetchCourses();
+    }
+  }, [searchParams]);
 
   const fetchCourses = async () => {
     try {
@@ -22,6 +36,45 @@ export default function CoursesPage() {
       setCourses(response.data);
     } catch (err) {
       setError('Failed to fetch courses');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCoursesByCategory = async () => {
+    try {
+      setLoading(true);
+      const response = await courseApi.getAll();
+      setCourses(response.data);
+    } catch (err) {
+      setError('Failed to fetch courses by category');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCoursesByTeacher = async () => {
+    try {
+      setLoading(true);
+      const response = await courseApi.getAll();
+      setCourses(response.data);
+    } catch (err) {
+      setError('Failed to fetch courses by teacher');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCoursesByStudent = async () => {
+    try {
+      setLoading(true);
+      const response = await courseApi.getAll();
+      setCourses(response.data);
+    } catch (err) {
+      setError('Failed to fetch courses by student');
       console.error(err);
     } finally {
       setLoading(false);
