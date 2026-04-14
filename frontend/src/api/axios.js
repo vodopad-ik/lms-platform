@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-// Use relative path for production, localhost for development
-const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:8080/api';
+// Use relative path for production (served from same domain)
+// Use localhost for local development
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8080/api'
+  : '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
