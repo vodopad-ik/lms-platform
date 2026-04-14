@@ -351,6 +351,35 @@
       "description": "Демонстрация: 1) асинхронная бизнес-операция с taskId и статусом 2) потокобезопасные счетчики 3) race condition и его решение",
       "item": [
         {
+          "name": "Async - Start 10-second demo (NO PARAMETERS)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/async-tasks/demo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "async-tasks", "demo"]
+            },
+            "description": "Запускает 10-секундную задачу без параметров. Сначала статус PENDING, потом PROCESSING с прогрессом 5%, 10%, 15%... каждые 0.5 сек, через 10 секунд SUCCESS."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.taskId) {",
+                  "  pm.collectionVariables.set('taskId', json.taskId);",
+                  "  pm.environment.set('taskId', json.taskId);",
+                  "  console.log('Task ID saved:', json.taskId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
           "name": "Async - Start task (returns taskId)",
           "request": {
             "method": "POST",
@@ -373,6 +402,8 @@
                   "const json = pm.response.json();",
                   "if (json && json.taskId) {",
                   "  pm.collectionVariables.set('taskId', json.taskId);",
+                  "  pm.environment.set('taskId', json.taskId);",
+                  "  console.log('Task ID saved:', json.taskId);",
                   "}"
                 ]
               }
@@ -381,14 +412,73 @@
           "response": []
         },
         {
-          "name": "Async - Get task status by taskId",
+          "name": "Async - Get task STATUS only",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/async-tasks/{{taskId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "async-tasks", "{{taskId}}", "status"]
+            },
+            "description": "Возвращает только статус и прогресс: PENDING → PROCESSING с прогрессом от 0 до 100%"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const taskId = pm.collectionVariables.get('taskId');",
+                  "if (!taskId) {",
+                  "  console.error('ERROR: taskId not set! Run POST /api/async-tasks/demo first');",
+                  "} else {",
+                  "  console.log('Using taskId:', taskId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Async - Get task RESULT only",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/async-tasks/{{taskId}}/result",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "async-tasks", "{{taskId}}", "result"]
+            },
+            "description": "Возвращает результат когда задача завершена, иначе сообщение 'Task not completed yet'"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const taskId = pm.collectionVariables.get('taskId');",
+                  "if (!taskId) {",
+                  "  console.error('ERROR: taskId not set! Run POST /api/async-tasks/demo first');",
+                  "} else {",
+                  "  console.log('Using taskId:', taskId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Async - Get full task info",
           "request": {
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/async-tasks/{{taskId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "async-tasks", "{{taskId}}"]
-            }
+            },
+            "description": "Возвращает полную информацию о задаче"
           },
           "response": []
         },

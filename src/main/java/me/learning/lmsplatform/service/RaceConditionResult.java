@@ -8,4 +8,12 @@ public record RaceConditionResult(
     int synchronizedActual,
     int atomicActual
 ) {
+  @Override
+  public String toString() {
+    return String.format(
+        "RaceConditionResult{threads=%d, increments=%d, expected=%d, "
+            + "unsafe=%d, synchronized=%d, atomic=%d}",
+        threads, incrementsPerThread, expected, unsafeActual, synchronizedActual, atomicActual
+    );
+  }
 }

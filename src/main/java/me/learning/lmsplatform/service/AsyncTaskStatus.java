@@ -2,7 +2,7 @@ package me.learning.lmsplatform.service;
 
 public enum AsyncTaskStatus {
   PENDING,
-  RUNNING,
+  PROCESSING,
   SUCCESS,
   FAILED
 }

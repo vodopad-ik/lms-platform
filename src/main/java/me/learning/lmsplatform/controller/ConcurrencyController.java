@@ -47,8 +47,12 @@ public class ConcurrencyController {
   @PostMapping("/race-demo")
   @Operation(summary = "Run race condition demo")
   public ResponseEntity<RaceConditionResult> raceDemo(
-      @RequestParam(defaultValue = "50") int threads,
-      @RequestParam(defaultValue = "1000") int incrementsPerThread) {
-    return ResponseEntity.ok(raceConditionDemoService.run(threads, incrementsPerThread));
+      @RequestParam(defaultValue = "10") int threads,
+      @RequestParam(defaultValue = "100") int incrementsPerThread) {
+    System.out.println("Starting race demo: " + threads + " threads, "
+        + incrementsPerThread + " increments each");
+    RaceConditionResult result = raceConditionDemoService.run(threads, incrementsPerThread);
+    System.out.println("Race demo completed: " + result.toString());
+    return ResponseEntity.ok(result);
   }
 }

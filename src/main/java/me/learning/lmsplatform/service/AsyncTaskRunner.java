@@ -1,4 +1,4 @@
-package me.learning.lmsplatform.service;
+  package me.learning.lmsplatform.service;
 
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
@@ -12,14 +12,14 @@ public class AsyncTaskRunner {
   public CompletableFuture<Void> run(String taskId, int steps, long delayMs,
                                      AsyncTaskService taskService) {
     Instant started = Instant.now();
-    taskService.update(taskId, AsyncTaskStatus.RUNNING, 0, started, null, null);
+    taskService.update(taskId, AsyncTaskStatus.PROCESSING, 0, started, null, null);
 
     try {
       int safeSteps = Math.max(1, steps);
       for (int i = 1; i <= safeSteps; i++) {
         Thread.sleep(Math.max(0L, delayMs));
         int progress = (i * 100) / safeSteps;
-        taskService.update(taskId, AsyncTaskStatus.RUNNING, progress, started, null, null);
+        taskService.update(taskId, AsyncTaskStatus.PROCESSING, progress, started, null, null);
       }
 
       Instant finished = Instant.now();

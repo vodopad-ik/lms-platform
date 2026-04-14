@@ -49,11 +49,11 @@ class AsyncTaskServiceTest {
   void update_shouldUpdateTaskStatusAndProgress() {
     String taskId = asyncTaskService.startDemoBusinessOperation(5, 10);
 
-    asyncTaskService.update(taskId, AsyncTaskStatus.RUNNING, 50, null, null, null);
+    asyncTaskService.update(taskId, AsyncTaskStatus.PROCESSING, 50, null, null, null);
 
     Optional<AsyncTaskInfo> taskOpt = asyncTaskService.getTask(taskId);
     assertTrue(taskOpt.isPresent());
-    assertEquals(AsyncTaskStatus.RUNNING, taskOpt.get().status());
+    assertEquals(AsyncTaskStatus.PROCESSING, taskOpt.get().status());
     assertEquals(50, taskOpt.get().progressPercent());
   }
 
@@ -86,11 +86,11 @@ class AsyncTaskServiceTest {
   void update_shouldClampProgressToValidRange() {
     String taskId = asyncTaskService.startDemoBusinessOperation(5, 10);
 
-    asyncTaskService.update(taskId, AsyncTaskStatus.RUNNING, 150, null, null, null);
+    asyncTaskService.update(taskId, AsyncTaskStatus.PROCESSING, 150, null, null, null);
     Optional<AsyncTaskInfo> taskOpt = asyncTaskService.getTask(taskId);
     assertEquals(100, taskOpt.get().progressPercent());
 
-    asyncTaskService.update(taskId, AsyncTaskStatus.RUNNING, -10, null, null, null);
+    asyncTaskService.update(taskId, AsyncTaskStatus.PROCESSING, -10, null, null, null);
     taskOpt = asyncTaskService.getTask(taskId);
     assertEquals(0, taskOpt.get().progressPercent());
   }
