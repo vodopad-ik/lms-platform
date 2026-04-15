@@ -45,7 +45,7 @@ public class AsyncTaskController {
   @PostMapping("/demo")
   @Operation(summary = "Generate LMS statistics (courses, students, teachers, lessons)")
   public ResponseEntity<Map<String, String>> startDemo() {
-    String taskId = asyncTaskService.startDemoBusinessOperation(1, 0);
+    String taskId = asyncTaskService.startDemoBusinessOperation(10, 1000);
     return ResponseEntity.ok(Map.of(TASK_ID, taskId));
   }
 
