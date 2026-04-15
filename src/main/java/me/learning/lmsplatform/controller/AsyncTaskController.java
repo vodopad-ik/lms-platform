@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/async-tasks")
 @RequiredArgsConstructor
-@Tag(name = "Async tasks", description = "Async business operation demo")
+@Tag(name = "Async tasks", description = "LMS statistics generation")
 public class AsyncTaskController {
 
   private final AsyncTaskService asyncTaskService;
 
   @PostMapping
-  @Operation(summary = "Start async business operation")
+  @Operation(summary = "Start LMS statistics generation")
   public ResponseEntity<Map<String, String>> start(
       @RequestParam(defaultValue = "10") int steps,
       @RequestParam(defaultValue = "100") long delayMs) {
@@ -34,10 +34,9 @@ public class AsyncTaskController {
   }
 
   @PostMapping("/demo")
-  @Operation(summary = "Start 10-second demo task without parameters")
+  @Operation(summary = "Generate LMS statistics (courses, students, teachers, lessons)")
   public ResponseEntity<Map<String, String>> startDemo() {
-    // 10 steps, 1000ms delay = 10 seconds total
-    String taskId = asyncTaskService.startDemoBusinessOperation(10, 1000);
+    String taskId = asyncTaskService.startDemoBusinessOperation(1, 0);
     return ResponseEntity.ok(Map.of("taskId", taskId));
   }
 
