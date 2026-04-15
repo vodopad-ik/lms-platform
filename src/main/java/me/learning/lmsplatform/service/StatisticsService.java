@@ -56,8 +56,10 @@ public class StatisticsService {
     @Override
     public String toString() {
       return String.format(
-          "LMS Statistics: %d courses, %d students, %d teachers, %d lessons, %d categories, avg price: $%s",
-          totalCourses, totalStudents, totalTeachers, totalLessons, totalCategories, averageCoursePrice
+          "LMS Statistics: %d courses, %d students, %d teachers, %d lessons, "
+              + "%d categories, avg price: $%s",
+          totalCourses, totalStudents, totalTeachers, totalLessons,
+          totalCategories, averageCoursePrice
       );
     }
   }
