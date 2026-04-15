@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.learning.lmsplatform.service.CounterService;
 import me.learning.lmsplatform.service.CounterType;
 import me.learning.lmsplatform.service.RaceConditionDemoService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/concurrency")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Concurrency demos", description = "Race condition and thread-safe counter demos")
 public class ConcurrencyController {
 
@@ -49,10 +51,9 @@ public class ConcurrencyController {
   public ResponseEntity<RaceConditionResult> raceDemo(
       @RequestParam(defaultValue = "10") int threads,
       @RequestParam(defaultValue = "100") int incrementsPerThread) {
-    System.out.println("Starting race demo: " + threads + " threads, "
-        + incrementsPerThread + " increments each");
+    log.info("Starting race demo: {} threads, {} increments each", threads, incrementsPerThread);
     RaceConditionResult result = raceConditionDemoService.run(threads, incrementsPerThread);
-    System.out.println("Race demo completed: " + result.toString());
+    log.info("Race demo completed: {}", result.toString());
     return ResponseEntity.ok(result);
   }
 }
