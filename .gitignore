@@ -46,6 +46,7 @@ postgres_data/
 logs/
 
 ### JMeter ###
+jmeter/
 jmeter-report/
 *.jtl
 statistics.json
