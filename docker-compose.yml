@@ -26,12 +26,11 @@ services:
       dockerfile: Dockerfile
     container_name: lms-platform-app
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydatabase?ssl=false&sslmode=disable&useSSL=false
+      SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/mydatabase?ssl=false&sslmode=disable&useSSL=false
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-my-safe-password-2026}
       SPRING_PROFILES_ACTIVE: prod
-    ports:
-      - "8080:8080"
+    network_mode: host
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,8 +40,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-    networks:
-      - lms-network
 
 volumes:
   postgres_data:
