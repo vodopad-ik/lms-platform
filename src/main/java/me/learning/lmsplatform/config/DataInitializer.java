@@ -29,6 +29,13 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class DataInitializer implements CommandLineRunner {
 
+    private static final String CATEGORY_DEVELOPMENT = "Development";
+    private static final String CATEGORY_DATA_SCIENCE = "Data Science";
+    private static final String CATEGORY_DESIGN = "Design";
+    private static final String CATEGORY_MARKETING = "Marketing";
+    private static final String CATEGORY_BUSINESS = "Business";
+    private static final String CATEGORY_DEVOPS = "DevOps";
+
     private record TeacherSeed(String name, String email, String department,
                                int experienceYears) {
     }
@@ -47,12 +54,12 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private static final List<String> CATEGORY_NAMES = List.of(
-        "Development",
-        "Data Science",
-        "Design",
-        "Marketing",
-        "Business",
-        "DevOps"
+        CATEGORY_DEVELOPMENT,
+        CATEGORY_DATA_SCIENCE,
+        CATEGORY_DESIGN,
+        CATEGORY_MARKETING,
+        CATEGORY_BUSINESS,
+        CATEGORY_DEVOPS
     );
 
     private static final List<String> COURSE_LEVELS = List.of(
@@ -93,77 +100,77 @@ public class DataInitializer implements CommandLineRunner {
 
     private static final List<StudentSeed> STUDENT_SEEDS = List.of(
         new StudentSeed("Anna Petrova", "anna.petrova@students.demo",
-            LocalDate.now().minusDays(90), "Development", "Design"),
+            LocalDate.now().minusDays(90), CATEGORY_DEVELOPMENT, CATEGORY_DESIGN),
         new StudentSeed("Ivan Kozlov", "ivan.kozlov@students.demo",
-            LocalDate.now().minusDays(86), "Development", "DevOps"),
+            LocalDate.now().minusDays(86), CATEGORY_DEVELOPMENT, CATEGORY_DEVOPS),
         new StudentSeed("Maria Sidorova", "maria.sidorova@students.demo",
-            LocalDate.now().minusDays(82), "Data Science", "Business"),
+            LocalDate.now().minusDays(82), CATEGORY_DATA_SCIENCE, CATEGORY_BUSINESS),
         new StudentSeed("Pavel Smirnov", "pavel.smirnov@students.demo",
-            LocalDate.now().minusDays(78), "Marketing", "Business"),
+            LocalDate.now().minusDays(78), CATEGORY_MARKETING, CATEGORY_BUSINESS),
         new StudentSeed("Olga Romanova", "olga.romanova@students.demo",
-            LocalDate.now().minusDays(74), "Design", "Marketing"),
+            LocalDate.now().minusDays(74), CATEGORY_DESIGN, CATEGORY_MARKETING),
         new StudentSeed("Nikita Fedorov", "nikita.fedorov@students.demo",
-            LocalDate.now().minusDays(70), "DevOps", "Development"),
+            LocalDate.now().minusDays(70), CATEGORY_DEVOPS, CATEGORY_DEVELOPMENT),
         new StudentSeed("Elena Volk", "elena.volk@students.demo",
-            LocalDate.now().minusDays(66), "Data Science", "Development"),
+            LocalDate.now().minusDays(66), CATEGORY_DATA_SCIENCE, CATEGORY_DEVELOPMENT),
         new StudentSeed("Denis Moroz", "denis.moroz@students.demo",
-            LocalDate.now().minusDays(62), "Business", "Marketing"),
+            LocalDate.now().minusDays(62), CATEGORY_BUSINESS, CATEGORY_MARKETING),
         new StudentSeed("Svetlana Orlova", "svetlana.orlova@students.demo",
-            LocalDate.now().minusDays(58), "Design", "Business"),
+            LocalDate.now().minusDays(58), CATEGORY_DESIGN, CATEGORY_BUSINESS),
         new StudentSeed("Kirill Antonov", "kirill.antonov@students.demo",
-            LocalDate.now().minusDays(54), "Development", "Data Science"),
+            LocalDate.now().minusDays(54), CATEGORY_DEVELOPMENT, CATEGORY_DATA_SCIENCE),
         new StudentSeed("Alina Belova", "alina.belova@students.demo",
-            LocalDate.now().minusDays(50), "Marketing", "Design"),
+            LocalDate.now().minusDays(50), CATEGORY_MARKETING, CATEGORY_DESIGN),
         new StudentSeed("Roman Egorov", "roman.egorov@students.demo",
-            LocalDate.now().minusDays(46), "DevOps", "Data Science"),
+            LocalDate.now().minusDays(46), CATEGORY_DEVOPS, CATEGORY_DATA_SCIENCE),
         new StudentSeed("Yulia Makarova", "yulia.makarova@students.demo",
-            LocalDate.now().minusDays(42), "Development", "Business"),
+            LocalDate.now().minusDays(42), CATEGORY_DEVELOPMENT, CATEGORY_BUSINESS),
         new StudentSeed("Artem Pavlov", "artem.pavlov@students.demo",
-            LocalDate.now().minusDays(38), "Data Science", "DevOps"),
+            LocalDate.now().minusDays(38), CATEGORY_DATA_SCIENCE, CATEGORY_DEVOPS),
         new StudentSeed("Polina Zaitseva", "polina.zaitseva@students.demo",
-            LocalDate.now().minusDays(34), "Design", "Marketing"),
+            LocalDate.now().minusDays(34), CATEGORY_DESIGN, CATEGORY_MARKETING),
         new StudentSeed("Maksim Lebedev", "maksim.lebedev@students.demo",
-            LocalDate.now().minusDays(30), "Business", "Development"),
+            LocalDate.now().minusDays(30), CATEGORY_BUSINESS, CATEGORY_DEVELOPMENT),
         new StudentSeed("Veronika Klimova", "veronika.klimova@students.demo",
-            LocalDate.now().minusDays(26), "Marketing", "Business"),
+            LocalDate.now().minusDays(26), CATEGORY_MARKETING, CATEGORY_BUSINESS),
         new StudentSeed("Timur Gromov", "timur.gromov@students.demo",
-            LocalDate.now().minusDays(22), "DevOps", "Development"),
+            LocalDate.now().minusDays(22), CATEGORY_DEVOPS, CATEGORY_DEVELOPMENT),
         new StudentSeed("Ekaterina Sorokina", "ekaterina.sorokina@students.demo",
-            LocalDate.now().minusDays(18), "Data Science", "Design"),
+            LocalDate.now().minusDays(18), CATEGORY_DATA_SCIENCE, CATEGORY_DESIGN),
         new StudentSeed("Ilya Voronov", "ilya.voronov@students.demo",
-            LocalDate.now().minusDays(14), "Development", "DevOps")
+            LocalDate.now().minusDays(14), CATEGORY_DEVELOPMENT, CATEGORY_DEVOPS)
     );
 
     private static final List<CourseTrack> COURSE_TRACKS = List.of(
         new CourseTrack("Java Backend", "Build enterprise-grade backend services",
-            "Development", "amelia.peters@lms.demo", 129.99, 6),
+            CATEGORY_DEVELOPMENT, "amelia.peters@lms.demo", 129.99, 6),
         new CourseTrack("Spring Boot APIs",
             "Design clean REST APIs and business workflows",
-            "Development", "alice.smith@lms.demo", 149.99, 7),
+            CATEGORY_DEVELOPMENT, "alice.smith@lms.demo", 149.99, 7),
         new CourseTrack("React Frontend",
             "Deliver modern, maintainable client interfaces",
-            "Development", "elena.volkova@lms.demo", 139.99, 6),
+            CATEGORY_DEVELOPMENT, "elena.volkova@lms.demo", 139.99, 6),
         new CourseTrack("Python Analytics",
             "Analyze real datasets and automate reporting",
-            "Data Science", "lena.morozova@lms.demo", 159.99, 7),
+            CATEGORY_DATA_SCIENCE, "lena.morozova@lms.demo", 159.99, 7),
         new CourseTrack("Machine Learning",
             "Train and evaluate practical ML pipelines",
-            "Data Science", "victor.chen@lms.demo", 189.99, 8),
+            CATEGORY_DATA_SCIENCE, "victor.chen@lms.demo", 189.99, 8),
         new CourseTrack("Product Design",
             "Create user-centered product experiences",
-            "Design", "diana.park@lms.demo", 119.99, 6),
+            CATEGORY_DESIGN, "diana.park@lms.demo", 119.99, 6),
         new CourseTrack("Digital Marketing",
             "Plan channels, funnels, and campaign execution",
-            "Marketing", "marta.alvarez@lms.demo", 109.99, 5),
+            CATEGORY_MARKETING, "marta.alvarez@lms.demo", 109.99, 5),
         new CourseTrack("Business Operations",
             "Structure repeatable processes for growing teams",
-            "Business", "sofia.bennett@lms.demo", 129.99, 6),
+            CATEGORY_BUSINESS, "sofia.bennett@lms.demo", 129.99, 6),
         new CourseTrack("Product Management",
             "Turn product strategy into execution plans",
-            "Business", "igor.sokolov@lms.demo", 149.99, 6),
+            CATEGORY_BUSINESS, "igor.sokolov@lms.demo", 149.99, 6),
         new CourseTrack("Cloud & DevOps",
             "Operate delivery pipelines and cloud platforms",
-            "DevOps", "omar.hassan@lms.demo", 169.99, 7)
+            CATEGORY_DEVOPS, "omar.hassan@lms.demo", 169.99, 7)
     );
 
     private final CourseRepository courseRepository;
@@ -305,6 +312,7 @@ public class DataInitializer implements CommandLineRunner {
     private String slugify(String value) {
         return value.toLowerCase(Locale.ROOT)
             .replaceAll("[^a-z0-9]+", "-")
-            .replaceAll("(^-|-$)", "");
+            .replaceAll("^-", "")
+            .replaceAll("-$", "");
     }
 }
