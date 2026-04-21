@@ -8,7 +8,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://lms-platform-app.onrender.com",
+      "value": "http://localhost:8080",
       "description": "Базовый URL приложения"
     },
     {
@@ -72,14 +72,15 @@
           "response": []
         },
         {
-          "name": "500 Internal Server Error - Ошибка базы данных",
+          "name": "500 Internal Server Error - Несуществующий endpoint",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "url": {
-              "raw": "{{baseUrl}}/api/test/database-error",
+              "raw": "{{baseUrl}}/api/test/no-transaction",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "test", "database-error"]
-            }
+              "path": ["api", "test", "no-transaction"]
+            },
+            "description": "Демонстрирует поведение без транзакции — первая запись сохранится, вторая вызовет ошибку"
           },
           "response": []
         }
@@ -273,11 +274,11 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/courses/filter?department=Software%20Engineering&page=0&size=10",
+              "raw": "{{baseUrl}}/api/courses/filter?department=Computer%20Science&page=0&size=10",
               "host": ["{{baseUrl}}"],
               "path": ["api", "courses", "filter"],
               "query": [
-                { "key": "department", "value": "Software Engineering" },
+                { "key": "department", "value": "Computer Science" },
                 { "key": "page", "value": "0" },
                 { "key": "size", "value": "10" }
               ]
@@ -557,11 +558,11 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/courses/filter?department=Software%20Engineering&category=Development&page=0&size=2",
+              "raw": "{{baseUrl}}/api/courses/filter?department=Computer%20Science&category=Development&page=0&size=2",
               "host": ["{{baseUrl}}"],
               "path": ["api", "courses", "filter"],
               "query": [
-                { "key": "department", "value": "Software Engineering" },
+                { "key": "department", "value": "Computer Science" },
                 { "key": "category", "value": "Development" },
                 { "key": "page", "value": "0" },
                 { "key": "size", "value": "2" }
@@ -576,11 +577,11 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/courses/filter?department=Software%20Engineering&category=Development&page=0&size=2",
+              "raw": "{{baseUrl}}/api/courses/filter?department=Computer%20Science&category=Development&page=0&size=2",
               "host": ["{{baseUrl}}"],
               "path": ["api", "courses", "filter"],
               "query": [
-                { "key": "department", "value": "Software Engineering" },
+                { "key": "department", "value": "Computer Science" },
                 { "key": "category", "value": "Development" },
                 { "key": "page", "value": "0" },
                 { "key": "size", "value": "2" }

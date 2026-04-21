@@ -12,9 +12,8 @@ const navItems = [
 ];
 
 const quickActions = [
-  { label: 'New course', to: '/courses' },
-  { label: 'Add student', to: '/students' },
-  { label: 'Browse lessons', to: '/lessons' },
+  { label: 'Open courses', to: '/courses' },
+  { label: 'Open students', to: '/students' },
 ];
 
 export default function AppShell({ children }) {
@@ -26,7 +25,7 @@ export default function AppShell({ children }) {
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
       <div className="mx-auto grid min-h-screen max-w-[1600px] grid-cols-1 xl:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="border-b border-slate-200 bg-slate-950 px-6 py-8 text-slate-100 xl:border-b-0 xl:border-r xl:border-slate-800">
+        <aside className="border-b border-slate-200 bg-slate-950 px-6 py-8 text-slate-100 xl:sticky xl:top-0 xl:h-screen xl:self-start xl:overflow-y-auto xl:border-b-0 xl:border-r xl:border-slate-800">
           <div className="flex items-center gap-3">
             <div className="rounded-2xl bg-indigo-500/20 p-3 ring-1 ring-indigo-400/20">
               <BookOpen className="h-7 w-7 text-indigo-300" />
@@ -56,7 +55,7 @@ export default function AppShell({ children }) {
           </nav>
 
           <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-5">
-            <h2 className="text-sm font-semibold text-white">Quick actions</h2>
+            <h2 className="text-sm font-semibold text-white">Quick access</h2>
             <div className="mt-4 space-y-3">
               {quickActions.map((action) => (
                 <Link
@@ -69,6 +68,9 @@ export default function AppShell({ children }) {
                 </Link>
               ))}
             </div>
+            <p className="mt-4 text-xs leading-5 text-slate-400">
+              Keep all core LMS entities close at hand while you work.
+            </p>
           </div>
         </aside>
 
