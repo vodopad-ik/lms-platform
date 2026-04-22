@@ -117,28 +117,23 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Deploy to PaaS (Render/Railway)
-      run: |
-        echo "Configure your PaaS deployment here"
-        echo "Example for Render:"
-        echo "  curl -X POST https://api.render.com/v1/services \
-          -H 'Authorization: Bearer ${{ secrets.RENDER_API_KEY }}' \
-          -d @render-config.json"
-        echo "Or use Railway CLI"
-        echo "  railway login --token ${{ secrets.RAILWAY_TOKEN }}"
-        echo "  railway up"
+    - name: Trigger Render deployment
+      run: curl --fail --silent --show-error -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
     
     - name: Healthcheck
       run: |
         echo "Waiting for application to be ready..."
-        sleep 30
-        response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.APP_URL }}/actuator/health)
-        if [ $response -eq 200 ]; then
-          echo "Healthcheck passed!"
-        else
-          echo "Healthcheck failed with status: $response"
-          exit 1
-        fi
+        for attempt in {1..12}; do
+          response=$(curl -s -o /dev/null -w "%{http_code}" "${{ secrets.APP_URL }}/actuator/health")
+          if [ "$response" -eq 200 ]; then
+            echo "Healthcheck passed!"
+            exit 0
+          fi
+          echo "Attempt $attempt/12: healthcheck returned $response"
+          sleep 10
+        done
+        echo "Healthcheck failed after multiple attempts"
+        exit 1
 
   security-scan:
     runs-on: ubuntu-latest
