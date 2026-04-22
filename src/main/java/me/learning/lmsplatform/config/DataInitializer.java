@@ -187,6 +187,7 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         migrateLegacyVideoUrls();
+        cleanupLoadTestData();
 
         if (courseRepository.count() > 0) {
             log.info("Skipping local seed because courses already exist.");
@@ -320,6 +321,17 @@ public class DataInitializer implements CommandLineRunner {
         String query = courseTitle + " " + lessonName + " tutorial";
         return "https://www.youtube.com/results?search_query="
             + URLEncoder.encode(query, StandardCharsets.UTF_8);
+    }
+
+    private void cleanupLoadTestData() {
+        List<Course> loadTestCourses = courseRepository.findAll().stream()
+            .filter(c -> "Load test course".equals(c.getDescription()))
+            .toList();
+        if (loadTestCourses.isEmpty()) {
+            return;
+        }
+        courseRepository.deleteAll(loadTestCourses);
+        log.info("Cleaned up {} load test courses from database.", loadTestCourses.size());
     }
 
     private void migrateLegacyVideoUrls() {
