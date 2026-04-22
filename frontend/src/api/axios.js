@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Use relative path for both development (with proxy) and production (same domain)
 const api = axios.create({
   baseURL: '/api',
   headers: {
@@ -9,7 +8,6 @@ const api = axios.create({
   withCredentials: false,
 });
 
-// Add response interceptor for better error handling
 api.interceptors.response.use(
   response => response,
   error => {
