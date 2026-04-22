@@ -1,4 +1,4 @@
-import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import { AlertCircle, ChevronLeft, ChevronRight, Loader2, RefreshCw } from 'lucide-react';
 
 export function cn(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -115,6 +115,92 @@ export function EmptyState({ title, description, action, icon: Icon }) {
       <h3 className="mt-4 text-lg font-semibold text-slate-900">{title}</h3>
       {description ? <p className="mt-2 text-sm text-slate-500">{description}</p> : null}
       {action ? <div className="mt-5">{action}</div> : null}
+    </div>
+  );
+}
+
+export function Pagination({ page, pageCount, onChange, pageSize, totalItems, onPageSizeChange, pageSizeOptions = [6, 9, 12, 24] }) {
+  if (pageCount <= 1 && !onPageSizeChange) return null;
+
+  const safePage = Math.min(Math.max(1, page), Math.max(1, pageCount));
+  const start = totalItems === 0 ? 0 : (safePage - 1) * pageSize + 1;
+  const end = Math.min(totalItems, safePage * pageSize);
+
+  const pageNumbers = [];
+  const maxVisible = 5;
+  let rangeStart = Math.max(1, safePage - Math.floor(maxVisible / 2));
+  let rangeEnd = Math.min(pageCount, rangeStart + maxVisible - 1);
+  rangeStart = Math.max(1, rangeEnd - maxVisible + 1);
+  for (let i = rangeStart; i <= rangeEnd; i++) pageNumbers.push(i);
+
+  return (
+    <div className="mt-5 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-xs text-slate-500">
+        {totalItems > 0
+          ? <>Showing <span className="font-medium text-slate-700">{start}-{end}</span> of <span className="font-medium text-slate-700">{totalItems}</span></>
+          : 'No items'}
+      </p>
+      <div className="flex flex-wrap items-center gap-2">
+        {onPageSizeChange ? (
+          <label className="flex items-center gap-2 text-xs text-slate-500">
+            <span>Per page</span>
+            <select
+              value={pageSize}
+              onChange={(event) => onPageSizeChange(Number(event.target.value))}
+              className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-indigo-300"
+            >
+              {pageSizeOptions.map((size) => (<option key={size} value={size}>{size}</option>))}
+            </select>
+          </label>
+        ) : null}
+        {pageCount > 1 ? (
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => onChange(Math.max(1, safePage - 1))}
+              disabled={safePage === 1}
+              className="rounded-lg border border-slate-200 p-1.5 text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            {rangeStart > 1 ? (
+              <>
+                <button type="button" onClick={() => onChange(1)} className="rounded-lg px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100">1</button>
+                {rangeStart > 2 ? <span className="px-1 text-xs text-slate-400">…</span> : null}
+              </>
+            ) : null}
+            {pageNumbers.map((pageNumber) => (
+              <button
+                key={pageNumber}
+                type="button"
+                onClick={() => onChange(pageNumber)}
+                className={cn(
+                  'rounded-lg px-2.5 py-1 text-xs font-medium transition',
+                  pageNumber === safePage
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100',
+                )}
+              >
+                {pageNumber}
+              </button>
+            ))}
+            {rangeEnd < pageCount ? (
+              <>
+                {rangeEnd < pageCount - 1 ? <span className="px-1 text-xs text-slate-400">…</span> : null}
+                <button type="button" onClick={() => onChange(pageCount)} className="rounded-lg px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100">{pageCount}</button>
+              </>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => onChange(Math.min(pageCount, safePage + 1))}
+              disabled={safePage === pageCount}
+              className="rounded-lg border border-slate-200 p-1.5 text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

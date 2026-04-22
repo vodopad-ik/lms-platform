@@ -1,5 +1,7 @@
 package me.learning.lmsplatform.config;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,6 +19,7 @@ import me.learning.lmsplatform.model.Student;
 import me.learning.lmsplatform.model.Teacher;
 import me.learning.lmsplatform.repository.CategoryRepository;
 import me.learning.lmsplatform.repository.CourseRepository;
+import me.learning.lmsplatform.repository.LessonRepository;
 import me.learning.lmsplatform.repository.StudentRepository;
 import me.learning.lmsplatform.repository.TeacherRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -173,13 +176,18 @@ public class DataInitializer implements CommandLineRunner {
             CATEGORY_DEVOPS, "omar.hassan@lms.demo", 169.99, 7)
     );
 
+    private static final String LEGACY_VIDEO_URL_PREFIX = "https://example.com/";
+
     private final CourseRepository courseRepository;
     private final TeacherRepository teacherRepository;
     private final CategoryRepository categoryRepository;
     private final StudentRepository studentRepository;
+    private final LessonRepository lessonRepository;
 
     @Override
     public void run(String... args) {
+        migrateLegacyVideoUrls();
+
         if (courseRepository.count() > 0) {
             log.info("Skipping local seed because courses already exist.");
             return;
@@ -300,8 +308,7 @@ public class DataInitializer implements CommandLineRunner {
                 .content("Hands-on lesson for " + course.getTitle()
                     + " covering a concrete part of the track.")
                 .durationMinutes(35 + (lessonIndex * 10) + (levelIndex * 5))
-                .videoUrl("https://example.com/videos/"
-                    + slugify(course.getTitle()) + "/" + (lessonIndex + 1))
+                .videoUrl(buildVideoUrl(course.getTitle(), lessonName))
                 .course(course)
                 .build());
         }
@@ -309,10 +316,29 @@ public class DataInitializer implements CommandLineRunner {
         return lessons;
     }
 
-    private String slugify(String value) {
-        return value.toLowerCase(Locale.ROOT)
-            .replaceAll("[^a-z0-9]+", "-")
-            .replaceAll("^-", "")
-            .replaceAll("-$", "");
+    private String buildVideoUrl(String courseTitle, String lessonName) {
+        String query = courseTitle + " " + lessonName + " tutorial";
+        return "https://www.youtube.com/results?search_query="
+            + URLEncoder.encode(query, StandardCharsets.UTF_8);
     }
+
+    private void migrateLegacyVideoUrls() {
+        List<Lesson> legacyLessons = lessonRepository.findAll().stream()
+            .filter(lesson -> lesson.getVideoUrl() != null
+                && lesson.getVideoUrl().startsWith(LEGACY_VIDEO_URL_PREFIX))
+            .toList();
+        if (legacyLessons.isEmpty()) {
+            return;
+        }
+        for (Lesson lesson : legacyLessons) {
+            String courseTitle = lesson.getCourse() != null
+                ? lesson.getCourse().getTitle()
+                : "course";
+            lesson.setVideoUrl(buildVideoUrl(courseTitle, lesson.getTitle()));
+        }
+        lessonRepository.saveAll(legacyLessons);
+        log.info("Migrated {} legacy lesson video URLs to real links.",
+            legacyLessons.size());
+    }
+
 }

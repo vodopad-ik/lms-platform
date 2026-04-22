@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { lessonApi } from '../api/lessonApi';
+import { courseApi } from '../api/courseApi';
+import { Pagination } from '../components/ui';
 import { Plus, Edit, Trash2, Clock, Video, BookOpen, ArrowLeft } from 'lucide-react';
 
 export default function LessonsPage() {
@@ -11,6 +13,19 @@ export default function LessonsPage() {
   const [editingLesson, setEditingLesson] = useState(null);
   const [filter, setFilter] = useState({ courseId: '', courseTitle: '', title: '' });
   const [searchParams] = useSearchParams();
+  const [courses, setCourses] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
+
+  useEffect(() => {
+    courseApi.getAll()
+      .then((response) => setCourses(response.data ?? []))
+      .catch((err) => console.error('Failed to load courses reference', err));
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [lessons, pageSize]);
 
   useEffect(() => {
     const courseId = searchParams.get('courseId');
@@ -100,10 +115,15 @@ export default function LessonsPage() {
     }
   };
 
+  const courseId = searchParams.get('courseId');
+  const pageCount = Math.max(1, Math.ceil(lessons.length / pageSize));
+  const paginatedLessons = useMemo(
+    () => lessons.slice((page - 1) * pageSize, page * pageSize),
+    [lessons, page, pageSize],
+  );
+
   if (loading) return <div className="text-center py-8">Loading...</div>;
   if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
-
-  const courseId = searchParams.get('courseId');
 
   return (
     <div>
@@ -129,13 +149,16 @@ export default function LessonsPage() {
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h3 className="text-lg font-semibold mb-4">Filter Lessons</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input
-            type="number"
-            placeholder="Course ID"
+          <select
             value={filter.courseId}
             onChange={(e) => setFilter({...filter, courseId: e.target.value})}
-            className="border rounded-lg px-4 py-2"
-          />
+            className="border rounded-lg px-4 py-2 bg-white"
+          >
+            <option value="">Any course</option>
+            {courses.map((course) => (
+              <option key={course.id} value={course.id}>{course.title}</option>
+            ))}
+          </select>
           <input
             type="text"
             placeholder="Course Title"
@@ -166,7 +189,7 @@ export default function LessonsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {lessons.map(lesson => (
+        {paginatedLessons.map(lesson => (
           <LessonCard
             key={lesson.id}
             lesson={lesson}
@@ -176,9 +199,21 @@ export default function LessonsPage() {
         ))}
       </div>
 
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white px-5 py-2">
+        <Pagination
+          page={page}
+          pageCount={pageCount}
+          onChange={setPage}
+          pageSize={pageSize}
+          totalItems={lessons.length}
+          onPageSizeChange={setPageSize}
+        />
+      </div>
+
       {showModal && (
         <LessonModal
           lesson={editingLesson}
+          courses={courses}
           onSave={handleSave}
           onClose={() => { setShowModal(false); setEditingLesson(null); }}
         />
@@ -228,7 +263,7 @@ function LessonCard({ lesson, onEdit, onDelete }) {
   );
 }
 
-function LessonModal({ lesson, onSave, onClose }) {
+function LessonModal({ lesson, courses = [], onSave, onClose }) {
   const [formData, setFormData] = useState(lesson || {
     title: '',
     content: '',
@@ -292,13 +327,18 @@ function LessonModal({ lesson, onSave, onClose }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Course ID</label>
-            <input
-              type="number"
-              value={formData.course?.id}
-              onChange={(e) => setFormData({...formData, course: { id: parseInt(e.target.value) }})}
-              className="w-full border rounded-lg px-3 py-2"
-            />
+            <label className="block text-sm font-medium mb-1">Course</label>
+            <select
+              required
+              value={formData.course?.id ?? ''}
+              onChange={(e) => setFormData({...formData, course: { id: e.target.value ? parseInt(e.target.value) : '' }})}
+              className="w-full border rounded-lg px-3 py-2 bg-white"
+            >
+              <option value="">Select a course</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
           </div>
           <div className="flex space-x-3">
             <button

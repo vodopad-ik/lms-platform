@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { BookOpen, Clock, DollarSign, Edit, Filter, GraduationCap, Plus, PlayCircle, Search, SlidersHorizontal, Trash2, Users } from 'lucide-react';
 import { courseApi } from '../api/courseApi';
-import { ActionButton, Badge, EmptyState, ErrorState, LoadingState, PageHeader, SectionCard, StatCard } from '../components/ui';
+import { categoryApi } from '../api/categoryApi';
+import { teacherApi } from '../api/teacherApi';
+import { studentApi } from '../api/studentApi';
+import { ActionButton, Badge, EmptyState, ErrorState, LoadingState, PageHeader, Pagination, SectionCard, StatCard } from '../components/ui';
 
 const defaultFilter = { department: '', category: '', minPrice: '', maxPrice: '' };
 
@@ -16,10 +19,42 @@ export default function CoursesPage() {
   const [quickSearch, setQuickSearch] = useState('');
   const [sortBy, setSortBy] = useState('title-asc');
   const [searchParams] = useSearchParams();
+  const [teachers, setTeachers] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [studentContext, setStudentContext] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
 
   useEffect(() => {
     fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    Promise.all([teacherApi.getAll(), categoryApi.getAll()])
+      .then(([teachersResponse, categoriesResponse]) => {
+        setTeachers(teachersResponse.data ?? []);
+        setCategories(categoriesResponse.data ?? []);
+      })
+      .catch((err) => console.error('Failed to load references', err));
+  }, []);
+
+  useEffect(() => {
+    const studentId = searchParams.get('studentId');
+    if (!studentId) {
+      setStudentContext(null);
+      return;
+    }
+    studentApi.getById(studentId)
+      .then((response) => setStudentContext(response.data))
+      .catch((err) => {
+        console.error('Failed to load student context', err);
+        setStudentContext(null);
+      });
   }, [searchParams]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchParams, quickSearch, sortBy, pageSize]);
 
   const fetchCourses = async () => {
     try {
@@ -102,16 +137,33 @@ export default function CoursesPage() {
     const teacherId = searchParams.get('teacherId');
     const studentId = searchParams.get('studentId');
 
-    if (categoryId) return { tone: 'indigo', label: `Filtered by category #${categoryId}` };
-    if (teacherId) return { tone: 'blue', label: `Filtered by teacher #${teacherId}` };
-    if (studentId) return { tone: 'emerald', label: `Filtered by student #${studentId}` };
+    if (categoryId) {
+      const category = categories.find((item) => String(item.id) === String(categoryId));
+      return { tone: 'indigo', label: `Category: ${category?.name ?? `#${categoryId}`}` };
+    }
+    if (teacherId) {
+      const teacher = teachers.find((item) => String(item.id) === String(teacherId));
+      return { tone: 'blue', label: `Teacher: ${teacher?.name ?? `#${teacherId}`}` };
+    }
+    if (studentId) {
+      return { tone: 'emerald', label: `Student: ${studentContext?.name ?? `#${studentId}`}` };
+    }
     return null;
-  }, [searchParams]);
+  }, [searchParams, categories, teachers, studentContext]);
 
   const visibleCourses = useMemo(() => {
     const needle = quickSearch.trim().toLowerCase();
+    const categoryId = searchParams.get('categoryId');
+    const teacherId = searchParams.get('teacherId');
+    const studentId = searchParams.get('studentId');
+    const studentCourseIds = studentId && studentContext?.courses
+      ? new Set(studentContext.courses.map((course) => String(course.id)))
+      : null;
 
     const searched = courses.filter((course) => {
+      if (categoryId && String(course.category?.id) !== String(categoryId)) return false;
+      if (teacherId && String(course.teacher?.id) !== String(teacherId)) return false;
+      if (studentCourseIds && !studentCourseIds.has(String(course.id))) return false;
       if (!needle) return true;
 
       return [
@@ -141,7 +193,13 @@ export default function CoursesPage() {
     });
 
     return sorted;
-  }, [courses, quickSearch, sortBy]);
+  }, [courses, quickSearch, sortBy, searchParams, studentContext]);
+
+  const pageCount = Math.max(1, Math.ceil(visibleCourses.length / pageSize));
+  const paginatedCourses = useMemo(
+    () => visibleCourses.slice((page - 1) * pageSize, page * pageSize),
+    [visibleCourses, page, pageSize],
+  );
 
   const stats = useMemo(() => {
     const totalValue = visibleCourses.reduce((sum, course) => sum + Number(course.price || 0), 0);
@@ -280,16 +338,26 @@ export default function CoursesPage() {
         subtitle={`${visibleCourses.length} courses currently visible`}
       >
         {visibleCourses.length ? (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {visibleCourses.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                onEdit={() => handleEdit(course)}
-                onDelete={() => handleDelete(course.id)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {paginatedCourses.map((course) => (
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  onEdit={() => handleEdit(course)}
+                  onDelete={() => handleDelete(course.id)}
+                />
+              ))}
+            </div>
+            <Pagination
+              page={page}
+              pageCount={pageCount}
+              onChange={setPage}
+              pageSize={pageSize}
+              totalItems={visibleCourses.length}
+              onPageSizeChange={setPageSize}
+            />
+          </>
         ) : (
           <EmptyState
             title="No courses match the current view"
@@ -308,6 +376,8 @@ export default function CoursesPage() {
       {showModal ? (
         <CourseModal
           course={editingCourse}
+          teachers={teachers}
+          categories={categories}
           onSave={handleSave}
           onClose={() => { setShowModal(false); setEditingCourse(null); }}
         />
@@ -377,7 +447,7 @@ function CourseCard({ course, onEdit, onDelete }) {
   );
 }
 
-function CourseModal({ course, onSave, onClose }) {
+function CourseModal({ course, teachers = [], categories = [], onSave, onClose }) {
   const [formData, setFormData] = useState(course || {
     title: '',
     description: '',
@@ -459,23 +529,33 @@ function CourseModal({ course, onSave, onClose }) {
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-slate-700">Teacher ID</span>
-              <input
-                type="number"
+              <span className="mb-2 block text-sm font-medium text-slate-700">Teacher</span>
+              <select
                 value={formData.teacher?.id ?? ''}
-                onChange={(event) => setFormData({ ...formData, teacher: { id: event.target.value } })}
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
-              />
+                onChange={(event) => setFormData({ ...formData, teacher: event.target.value ? { id: event.target.value } : { id: '' } })}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
+              >
+                <option value="">Unassigned</option>
+                {teachers.map((teacher) => (
+                  <option key={teacher.id} value={teacher.id}>
+                    {teacher.name}{teacher.department ? ` — ${teacher.department}` : ''}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-slate-700">Category ID</span>
-              <input
-                type="number"
+              <span className="mb-2 block text-sm font-medium text-slate-700">Category</span>
+              <select
                 value={formData.category?.id ?? ''}
-                onChange={(event) => setFormData({ ...formData, category: { id: event.target.value } })}
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
-              />
+                onChange={(event) => setFormData({ ...formData, category: event.target.value ? { id: event.target.value } : { id: '' } })}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
+              >
+                <option value="">Uncategorized</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </select>
             </label>
           </div>
 
