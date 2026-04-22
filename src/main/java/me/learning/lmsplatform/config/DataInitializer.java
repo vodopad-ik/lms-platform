@@ -327,6 +327,7 @@ public class DataInitializer implements CommandLineRunner {
         List<Course> loadTestCourses = courseRepository.findAll().stream()
             .filter(c -> "Load test course".equals(c.getDescription()))
             .toList();
+        log.info("Found {} courses for cleanup.", loadTestCourses.size());
         if (loadTestCourses.isEmpty()) {
             return;
         }
