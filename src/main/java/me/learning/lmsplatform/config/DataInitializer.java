@@ -324,15 +324,24 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void cleanupLoadTestData() {
-        List<Course> loadTestCourses = courseRepository.findAll().stream()
-            .filter(c -> c.getDescription() != null && c.getDescription().contains("Load test"))
-            .toList();
-        log.info("Found {} courses for cleanup.", loadTestCourses.size());
-        if (loadTestCourses.isEmpty()) {
+        boolean hasContamination = courseRepository.count() > 60 ||
+                                   teacherRepository.count() > 20 ||
+                                   studentRepository.count() > 30 ||
+                                   categoryRepository.count() > 10;
+
+        if (!hasContamination) {
             return;
         }
-        courseRepository.deleteAll(loadTestCourses);
-        log.info("Cleaned up {} load test courses from database.", loadTestCourses.size());
+
+        log.warn("Detected contaminated database (likely from load testing). Wiping all data to restart seed...");
+
+        lessonRepository.deleteAll();
+        courseRepository.deleteAll();
+        studentRepository.deleteAll();
+        teacherRepository.deleteAll();
+        categoryRepository.deleteAll();
+
+        log.info("Database wiped clean.");
     }
 
     private void migrateLegacyVideoUrls() {
