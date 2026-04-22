@@ -15,6 +15,7 @@ permissions:
 env:
   JAVA_VERSION: '21'
   MAVEN_OPTS: -Xmx3072m
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
   build-and-test:
@@ -51,10 +52,6 @@ jobs:
     
     - name: Run tests
       run: ./mvnw test
-      env:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/mydatabase
-        SPRING_DATASOURCE_USERNAME: myuser
-        SPRING_DATASOURCE_PASSWORD: my-safe-password-2026
     
     - name: Generate test report
       if: always()
@@ -157,6 +154,6 @@ jobs:
         output: 'trivy-results.sarif'
     
     - name: Upload Trivy results to GitHub Security
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: 'trivy-results.sarif'
