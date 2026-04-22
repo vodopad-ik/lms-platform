@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { teacherApi } from '../api/teacherApi';
+import { Pagination } from '../components/ui';
 import { Plus, Edit, Trash2, Mail, Briefcase, BookOpen, Award } from 'lucide-react';
 
 export default function TeachersPage() {
@@ -10,10 +11,16 @@ export default function TeachersPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState(null);
   const [filter, setFilter] = useState({ name: '', department: '', courseCategory: '' });
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
 
   useEffect(() => {
     fetchTeachers();
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [teachers, pageSize]);
 
   const fetchTeachers = async () => {
     try {
@@ -80,6 +87,9 @@ export default function TeachersPage() {
     }
   };
 
+  const pageCount = Math.max(1, Math.ceil(teachers.length / pageSize));
+  const paginatedTeachers = teachers.slice((page - 1) * pageSize, page * pageSize);
+
   if (loading) return <div className="text-center py-8">Loading...</div>;
   if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
 
@@ -136,7 +146,7 @@ export default function TeachersPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teachers.map(teacher => (
+        {paginatedTeachers.map(teacher => (
           <TeacherCard
             key={teacher.id}
             teacher={teacher}
@@ -144,6 +154,17 @@ export default function TeachersPage() {
             onDelete={() => handleDelete(teacher.id)}
           />
         ))}
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white px-5 py-2">
+        <Pagination
+          page={page}
+          pageCount={pageCount}
+          onChange={setPage}
+          pageSize={pageSize}
+          totalItems={teachers.length}
+          onPageSizeChange={setPageSize}
+        />
       </div>
 
       {showModal && (

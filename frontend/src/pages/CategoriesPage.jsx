@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { categoryApi } from '../api/categoryApi';
+import { Pagination } from '../components/ui';
 import { Plus, Edit, Trash2, Tag, BookOpen } from 'lucide-react';
 
 export default function CategoriesPage() {
@@ -9,10 +10,16 @@ export default function CategoriesPage() {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [categories, pageSize]);
 
   const fetchCategories = async () => {
     try {
@@ -61,6 +68,9 @@ export default function CategoriesPage() {
     }
   };
 
+  const pageCount = Math.max(1, Math.ceil(categories.length / pageSize));
+  const paginatedCategories = categories.slice((page - 1) * pageSize, page * pageSize);
+
   if (loading) return <div className="text-center py-8">Loading...</div>;
   if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
 
@@ -78,7 +88,7 @@ export default function CategoriesPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map(category => (
+        {paginatedCategories.map(category => (
           <CategoryCard
             key={category.id}
             category={category}
@@ -86,6 +96,17 @@ export default function CategoriesPage() {
             onDelete={() => handleDelete(category.id)}
           />
         ))}
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white px-5 py-2">
+        <Pagination
+          page={page}
+          pageCount={pageCount}
+          onChange={setPage}
+          pageSize={pageSize}
+          totalItems={categories.length}
+          onPageSizeChange={setPageSize}
+        />
       </div>
 
       {showModal && (
