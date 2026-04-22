@@ -9,7 +9,9 @@ import { teacherApi } from '../api/teacherApi';
 import { ActionButton, Badge, EmptyState, ErrorState, LoadingState, PageHeader, SectionCard, StatCard } from '../components/ui';
 
 function asArray(value) {
-  return Array.isArray(value) ? value : [];
+  if (Array.isArray(value)) return value;
+  if (value && Array.isArray(value.content)) return value.content;
+  return [];
 }
 
 export default function DashboardPage() {
