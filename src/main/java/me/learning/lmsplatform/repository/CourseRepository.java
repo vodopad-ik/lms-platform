@@ -24,7 +24,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   Optional<Course> findById(Long id);
 
   @Query("SELECT c FROM Course c JOIN FETCH c.lessons WHERE c.id = :id")
-  Optional<Course> findCourseWithLessons(Long id);
+  Optional<Course> findCourseWithLessons(@Param("id") Long id);
 
   @EntityGraph(attributePaths = {"teacher", "category"})
   @Query(

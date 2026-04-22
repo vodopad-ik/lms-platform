@@ -37,7 +37,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
               AND (:teacherDepartment IS NULL OR LOWER(t.department)
                 LIKE LOWER(CONCAT('%', :teacherDepartment, '%')))
             """,
-        
+        countQuery = """
+            SELECT COUNT(DISTINCT cat.id) FROM categories cat
+            LEFT JOIN courses c ON c.category_id = cat.id
+            LEFT JOIN teachers t ON t.id = c.teacher_id
+            WHERE (:nameFilter IS NULL OR LOWER(cat.name) LIKE LOWER(CONCAT('%', :nameFilter, '%')))
+              AND (:teacherDepartment IS NULL OR LOWER(t.department)
+                LIKE LOWER(CONCAT('%', :teacherDepartment, '%')))
+            """,
         nativeQuery = true)
     Page<Category> findWithFiltersNative(
         @Param("nameFilter") String nameFilter,
