@@ -38,14 +38,6 @@ jobs:
     - name: Run tests
       run: ./mvnw test
 
-    - name: Generate test report
-      if: always()
-      uses: dorny/test-reporter@v1
-      with:
-        name: Maven Tests
-        path: target/surefire-reports/*.xml
-        reporter: java-junit
-
     - name: Build JAR
       run: ./mvnw package -DskipTests
 
