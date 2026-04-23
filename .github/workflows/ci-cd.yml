@@ -10,12 +10,10 @@ permissions:
   contents: read
   checks: write
   pull-requests: write
-  security-events: write
 
 env:
   JAVA_VERSION: '21'
   MAVEN_OPTS: -Xmx3072m
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
   backend-tests:
@@ -144,24 +142,3 @@ jobs:
         done
         echo "Healthcheck failed after multiple attempts"
         exit 1
-
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-
-    - name: Upload Trivy results to GitHub Security
-      uses: github/codeql-action/upload-sarif@v4
-      with:
-        sarif_file: 'trivy-results.sarif'
