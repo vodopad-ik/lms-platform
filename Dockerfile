@@ -4,7 +4,7 @@ COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
 COPY src ./src
-RUN chmod +x mvnw && ./mvnw clean package -DskipTests -Dcheckstyle.skip=true
+RUN chmod +x mvnw && ./mvnw clean package -DskipTests -Dcheckstyle.skip=true -Dmaven.wagon.http.retryHandler.count=3
 
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
