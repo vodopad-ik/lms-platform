@@ -8,7 +8,6 @@ services:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: ${DB_PASSWORD:-my-safe-password-2026}
-    network_mode: host
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -16,18 +15,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - lms-network
 
-  app:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: lms-platform-app
+    container_name: lms-platform-backend
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/mydatabase?sslmode=disable
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydatabase?sslmode=disable
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-my-safe-password-2026}
       SPRING_PROFILES_ACTIVE: prod
-    network_mode: host
     depends_on:
       postgres:
         condition: service_healthy
@@ -37,6 +37,20 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
+    networks:
+      - lms-network
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    container_name: lms-platform-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - lms-network
 
 volumes:
   postgres_data:

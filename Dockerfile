@@ -1,11 +1,4 @@
-FROM node:20-alpine AS frontend-builder
-WORKDIR /frontend
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm install
-COPY frontend ./
-RUN npm run build
-
-FROM eclipse-temurin:21-jdk-jammy AS backend-builder
+FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /build
 COPY pom.xml .
 COPY mvnw .
@@ -15,8 +8,7 @@ RUN chmod +x mvnw && ./mvnw clean package -DskipTests -Dcheckstyle.skip=true
 
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY --from=backend-builder /build/target/lms-platform-0.0.1-SNAPSHOT.jar app.jar
-COPY --from=frontend-builder /frontend/dist ./static
+COPY --from=builder /build/target/lms-platform-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
